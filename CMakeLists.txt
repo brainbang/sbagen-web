@@ -27,13 +27,13 @@ if(BUILD_WASM)
 
         # Enable OGG support for WASM builds using Emscripten ports
         if(ENABLE_OGG)
-            message(STATUS "Enabling OGG support via Emscripten ports")
+            message(STATUS "Enabling OGG support via Emscripten ports (Tremor/Vorbisidec)")
             target_compile_definitions(sbagen PRIVATE OGG_DECODE)
 
-            # Add Emscripten port flags for compile and link
-            target_compile_options(sbagen PRIVATE -sUSE_VORBIS=1 -sUSE_OGG=1 -pthread)
+            # Add Emscripten port flags for Tremor (no pthread needed)
+            target_compile_options(sbagen PRIVATE -sUSE_VORBIS=1 -sUSE_OGG=1)
 
-            # Use Emscripten's port system for vorbis/ogg
+            # Use Emscripten's port system for Tremor
             set_target_properties(sbagen PROPERTIES
                 LINK_FLAGS "-s WASM=1 \
                             -s EXPORTED_FUNCTIONS='[\"_main\"]' \
@@ -46,9 +46,7 @@ if(BUILD_WASM)
                             -s FILESYSTEM=1 \
                             -s EXIT_RUNTIME=0 \
                             -s USE_VORBIS=1 \
-                            -s USE_OGG=1 \
-                            -s PTHREAD_POOL_SIZE=4 \
-                            -pthread"
+                            -s USE_OGG=1"
             )
         else()
             # Export functions that will be callable from JavaScript

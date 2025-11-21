@@ -142,74 +142,12 @@ class SBaGenPlayer extends HTMLElement {
       <style>
         :host {
           display: block;
-          font-family: system-ui, -apple-system, sans-serif;
-          padding: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          background: #f9f9f9;
-          max-width: 400px;
-        }
-
-        .container {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-
-        .title {
-          font-weight: bold;
-          font-size: 1.1em;
-          margin: 0;
-          color: #333;
-        }
-
-        .status {
-          color: #666;
-          font-size: 0.9em;
-        }
-
-        .controls {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
-
-        button {
-          padding: 0.5rem 1rem;
-          border: none;
-          border-radius: 4px;
-          background: #007bff;
-          color: white;
-          font-size: 1em;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-
-        button:hover:not(:disabled) {
-          background: #0056b3;
-        }
-
-        button:disabled {
-          background: #ccc;
-          cursor: not-allowed;
-        }
-
-        .time {
-          font-variant-numeric: tabular-nums;
-          font-size: 1.2em;
-          color: #333;
-          min-width: 4em;
         }
       </style>
 
-      <div class="container">
-        <h3 class="title">SBaGen Player</h3>
-        <div class="status" id="status">Initializing...</div>
-        <div class="controls">
-          <button id="playBtn" disabled>▶ Play</button>
-          <span class="time" id="timeDisplay">0:00</span>
-        </div>
-      </div>
+      <button id="playBtn" disabled>▶ Play</button>
+      <span id="timeDisplay">0:00</span>
+      <small id="status">Initializing...</small>
     `;
 
     const playBtn = this.shadowRoot.querySelector('#playBtn');

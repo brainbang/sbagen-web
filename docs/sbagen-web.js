@@ -40,7 +40,6 @@ export default class SBaGen {
     });
 
     this.audioContext = new AudioContext();
-    await this.audioContext.audioWorklet.addModule('audio-processor.js');
   }
 
   /**

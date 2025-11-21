@@ -1,14 +1,11 @@
 //
-//	OGG decoding using libvorbis (adapted from Tremor version), with optional
-//	looping.
+//	OGG decoding using libvorbis (without pthread), with optional looping.
 //
 //        (c) 1999-2004 Jim Peters <jim@uazu.net>.  All Rights Reserved.
 //        For latest version see http://sbagen.sf.net/ or
 //        http://uazu.net/sbagen/.  Released under the GNU GPL version 2.
 //
 //	See comments lower down for OGG looper parameters.
-//
-//      Adapted to use standard libvorbis instead of Tremor (integer vorbis)
 //
 
 #include <vorbis/codec.h>

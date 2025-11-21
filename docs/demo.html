@@ -139,11 +139,13 @@ sbagen.on('generating', () =&gt; console.log('Generating audio...'));</code></pr
           sbagen.on('play', () => {
             playBtn.style.display = 'none';
             stopBtn.style.display = 'inline-block';
+            stopBtn.disabled = false;
           });
 
           sbagen.on('stop', () => {
             playBtn.style.display = 'inline-block';
             stopBtn.style.display = 'none';
+            stopBtn.disabled = true;
           });
 
           sbagen.on('timeupdate', (time) => {
