@@ -31,7 +31,6 @@
       </article>
 
       <article>
-        <h2>Quick Start</h2>
         <p>Select a pre-loaded example or upload your own .sbg file:</p>
 
         <label>
@@ -432,11 +431,20 @@
           sbagen.on("play", () => {
             playBtn.style.display = "none";
             stopBtn.style.display = "inline-block";
+            statusEl.innerHTML = "<p>▶ Playing...</p>";
           });
 
           sbagen.on("stop", () => {
             playBtn.style.display = "inline-block";
             stopBtn.style.display = "none";
+            timeDisplay.textContent = "0:00";
+            statusEl.innerHTML = "<p>⏹ Stopped</p>";
+          });
+
+          sbagen.on("pause", () => {
+            playBtn.style.display = "inline-block";
+            stopBtn.style.display = "none";
+            statusEl.innerHTML = "<p>⏸ Paused</p>";
           });
 
           sbagen.on("timeupdate", (time) => {
@@ -446,8 +454,7 @@
           });
 
           sbagen.on("generating", () => {
-            statusEl.innerHTML =
-              '<p aria-busy="true">Generating audio (60 seconds)...</p>';
+            statusEl.innerHTML = '<p aria-busy="true">Generating audio...</p>';
           });
         } catch (error) {
           statusEl.innerHTML = `<mark>Error: ${error.message}</mark>`;
@@ -477,7 +484,8 @@
 
           outputEl.textContent = info.content;
         } catch (error) {
-          statusEl.innerHTML = `<mark>Error: ${error.message}</mark>`;
+          console.error("Load error:", error);
+          statusEl.innerHTML = `<mark>Error loading: ${error.message}</mark>`;
         }
       }
 
@@ -500,9 +508,12 @@
       // Play button
       playBtn.addEventListener("click", async () => {
         try {
+          console.log("Play button clicked");
           await sbagen.play();
+          console.log("Play started successfully");
         } catch (error) {
-          statusEl.innerHTML = `<mark>Error: ${error.message}</mark>`;
+          console.error("Play error:", error);
+          statusEl.innerHTML = `<mark>Error playing: ${error.message}</mark>`;
         }
       });
 

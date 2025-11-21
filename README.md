@@ -1,50 +1,40 @@
-# SBaGen Web Library & Component
+# SBaGen Web
 
-This allows you to run [sbagen](https://uazu.net/sbagen/) on the web!
+This allows you to run [sbagen](https://uazu.net/sbagen/) in the browser!
 
-Jim Peters wrote the original, and it's pretty much the best at producing binaural beats. I did a little bit of modification to get it running on web.
-
-If you want some config files for it, check out [sbagen_idoser](https://github.com/brainbang/sbagen_idoser). They are not really "digital drugs", but definitely have an effect. There are also a bunch of [examples](docs/examples).
+Jim Peters wrote the original - it's the best at producing binaural beats. I did a little modification to get it running on the web.
 
 JavaScript library and web component for binaural beat generation in the browser using SBaGen compiled to WebAssembly.
 
 ## Features
 
 - 🎵 Generate binaural beats directly in the browser
-- 🎨 Simple web component for easy integration
+- 🎨 Minimal web component - style it your way
 - 📦 Clean JavaScript API
-- 🔊 OGG file support with threading
+- 🔊 Full OGG file support
 - ⚡ High-performance WebAssembly
+- 🌐 Works on GitHub Pages (no special headers required)
+- 🎧 Smooth looping audio playback
+
+## Quick Start
+
+Check out the [live demo](https://brainbang.github.io/sbagen-web/) or see [index.html](docs/index.html) for complete examples.
 
 ## Installation
 
 Copy these files to your project:
 
-- `sbagen-web.js` - JavaScript library
-- `sbagen-player.js` - Web component
-- `sbagen/` - WASM module directory
-- `audio-processor.js` - Audio worklet processor
+- `docs/sbagen-web.js` - JavaScript library
+- `docs/sbagen-player.js` - Web component
+- `docs/sbagen/` - WASM module directory
 
-## Server Requirements
+Or just use them directly from the `docs/` folder.
 
-**Important:** OGG support requires pthread/SharedArrayBuffer, which needs these HTTP headers:
+## Sequences
 
-```
-Cross-Origin-Opener-Policy: same-origin
-Cross-Origin-Embedder-Policy: require-corp
-```
-
-You can run this locally with:
-
-```bash
-npm start
-```
-
-Sequences without OGG files work without these headers.
-
-## Examples
-
-See [index.html](docs/index.html) for complete examples of both the library and web component.
+Looking for .sbg sequence files? Check out:
+- [sbagen_idoser](https://github.com/brainbang/sbagen_idoser) - Large collection
+- [examples](docs/examples) - Included examples
 
 ## Browser Support
 
@@ -52,12 +42,7 @@ See [index.html](docs/index.html) for complete examples of both the library and 
 - Firefox 79+
 - Safari 15.2+
 
-Requires:
-
-- ES6 modules
-- WebAssembly
-- AudioWorklet
-- SharedArrayBuffer (for OGG support only)
+Requires ES6 modules and WebAssembly (all modern browsers).
 
 ## Usage
 
@@ -71,9 +56,22 @@ The simplest way to add a binaural beat player to your page:
 <sbagen-player src="examples/basics/ts-brain-alpha.sbg"></sbagen-player>
 ```
 
+The component has minimal styling - style it with your own CSS:
+
+```css
+sbagen-player {
+  /* your styling here */
+}
+
+sbagen-player button {
+  /* button styling */
+}
+```
+
 #### Attributes
 
 - `src` - Path to .sbg sequence file
+- `ogg-path` - Directory for OGG files (default: `examples/`)
 
 #### Events
 
@@ -118,6 +116,9 @@ const info = await sbagen.load("examples/basics/ts-brain-alpha.sbg");
 const file = document.querySelector("input[type=file]").files[0];
 const info = await sbagen.load(file);
 
+// Optional: specify OGG file directory
+await sbagen.load("path/to/file.sbg", { oggPath: "path/to/oggs/" });
+
 // Analyze the sequence
 console.log("Filename:", info.filename);
 console.log("Duration:", info.estimatedDuration, "seconds");
@@ -129,11 +130,15 @@ await sbagen.play();
 // Get current time
 const time = sbagen.getCurrentTime(); // in seconds
 
-// Stop
+// Pause (keeps time position)
+sbagen.pause();
+
+// Stop (resets time to 0)
 sbagen.stop();
 
 // Event listeners
 sbagen.on("play", () => console.log("Started"));
+sbagen.on("pause", () => console.log("Paused"));
 sbagen.on("stop", () => console.log("Stopped"));
 sbagen.on("timeupdate", (time) => console.log("Time:", time));
 sbagen.on("generating", () => console.log("Generating audio..."));
@@ -159,13 +164,15 @@ Create and initialize a new SBaGen instance.
 
 #### Instance Methods
 
-##### `load(source)`
+##### `load(source, options)`
 
 Load a sequence file.
 
 **Parameters:**
 
 - `source` - URL string or File object
+- `options` (optional)
+  - `oggPath` - Directory for OGG files (default: `'examples/'`)
 
 **Returns:** `Promise<Object>` - Sequence info:
 
@@ -186,13 +193,17 @@ Analyze the currently loaded sequence.
 
 ##### `play()`
 
-Start playback.
+Start or resume playback.
 
 **Returns:** `Promise<void>`
 
+##### `pause()`
+
+Pause playback (keeps current time position).
+
 ##### `stop()`
 
-Stop playback.
+Stop playback (resets time to 0).
 
 ##### `getCurrentTime()`
 
@@ -207,7 +218,8 @@ Add event listener.
 **Events:**
 
 - `play` - Playback started
-- `stop` - Playback stopped
+- `pause` - Playback paused (time kept)
+- `stop` - Playback stopped (time reset to 0)
 - `timeupdate` - Time updated (callback receives time in seconds)
 - `generating` - Audio buffer generation started
 
@@ -219,6 +231,22 @@ Remove event listener.
 
 Cleanup and release resources.
 
+## Building
+
+To rebuild the WASM module:
+
+```bash
+./build-wasm.sh
+```
+
+Requirements:
+- CMake 3.15+
+- Emscripten 4.0+
+
+The build script compiles SBaGen to WebAssembly with OGG support via libvorbis.
+
 ## License
 
 SBaGen is GPL v2. See original project at https://uazu.net/sbagen/
+
+Web port modifications by konsumer.

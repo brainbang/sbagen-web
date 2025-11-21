@@ -146,6 +146,13 @@ sbagen.on('generating', () =&gt; console.log('Generating audio...'));</code></pr
             playBtn.style.display = 'inline-block';
             stopBtn.style.display = 'none';
             stopBtn.disabled = true;
+            timeDisplay.textContent = '0:00';
+          });
+
+          sbagen.on('pause', () => {
+            playBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'none';
+            stopBtn.disabled = true;
           });
 
           sbagen.on('timeupdate', (time) => {

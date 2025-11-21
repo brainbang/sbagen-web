@@ -17,18 +17,18 @@
  *   - error: Fired on error
  */
 
-import SBaGen from './sbagen-web.js';
+import SBaGen from "./sbagen-web.js";
 
 class SBaGenPlayer extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: "open" });
     this.sbagen = null;
     this.info = null;
   }
 
   static get observedAttributes() {
-    return ['src', 'ogg-path'];
+    return ["src", "ogg-path"];
   }
 
   async connectedCallback() {
@@ -38,35 +38,35 @@ class SBaGenPlayer extends HTMLElement {
       this.sbagen = await SBaGen.create();
 
       // Set up event listeners
-      this.sbagen.on('play', () => {
+      this.sbagen.on("play", () => {
         this.updateUI();
-        this.dispatchEvent(new CustomEvent('play'));
+        this.dispatchEvent(new CustomEvent("play"));
       });
 
-      this.sbagen.on('stop', () => {
+      this.sbagen.on("stop", () => {
         this.updateUI();
-        this.dispatchEvent(new CustomEvent('stop'));
+        this.dispatchEvent(new CustomEvent("stop"));
       });
 
-      this.sbagen.on('timeupdate', (time) => {
+      this.sbagen.on("timeupdate", (time) => {
         this.updateTime(time);
-        this.dispatchEvent(new CustomEvent('timeupdate', { detail: { time } }));
+        this.dispatchEvent(new CustomEvent("timeupdate", { detail: { time } }));
       });
 
-      this.sbagen.on('generating', () => {
-        this.setStatus('Generating audio...');
+      this.sbagen.on("generating", () => {
+        this.setStatus("Generating audio...");
       });
 
       // Auto-load if src is set
-      const src = this.getAttribute('src');
+      const src = this.getAttribute("src");
       if (src) {
         await this.load(src);
       }
 
-      this.setStatus('Ready');
+      this.setStatus("Ready");
     } catch (error) {
       this.setStatus(`Error: ${error.message}`);
-      this.dispatchEvent(new CustomEvent('error', { detail: { error } }));
+      this.dispatchEvent(new CustomEvent("error", { detail: { error } }));
     }
   }
 
@@ -77,22 +77,24 @@ class SBaGenPlayer extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'src' && newValue && this.sbagen) {
+    if (name === "src" && newValue && this.sbagen) {
       this.load(newValue);
     }
   }
 
   async load(src) {
     try {
-      this.setStatus('Loading...');
-      const oggPath = this.getAttribute('ogg-path') || 'examples/';
+      this.setStatus("Loading...");
+      const oggPath = this.getAttribute("ogg-path") || "examples/";
       this.info = await this.sbagen.load(src, { oggPath });
-      this.setStatus('Ready');
+      this.setStatus("Ready");
       this.updateUI();
-      this.dispatchEvent(new CustomEvent('load', { detail: { info: this.info } }));
+      this.dispatchEvent(
+        new CustomEvent("load", { detail: { info: this.info } }),
+      );
     } catch (error) {
       this.setStatus(`Error: ${error.message}`);
-      this.dispatchEvent(new CustomEvent('error', { detail: { error } }));
+      this.dispatchEvent(new CustomEvent("error", { detail: { error } }));
     }
   }
 
@@ -103,35 +105,37 @@ class SBaGenPlayer extends HTMLElement {
 
     if (this.sbagen.isPlaying) {
       this.sbagen.stop();
+      this.setStatus("Ready");
     } else {
       try {
         await this.sbagen.play();
+        this.setStatus("Playing");
       } catch (error) {
         this.setStatus(`Error: ${error.message}`);
-        this.dispatchEvent(new CustomEvent('error', { detail: { error } }));
+        this.dispatchEvent(new CustomEvent("error", { detail: { error } }));
       }
     }
   }
 
   updateUI() {
-    const playBtn = this.shadowRoot.querySelector('#playBtn');
+    const playBtn = this.shadowRoot.querySelector("#playBtn");
     if (playBtn) {
-      playBtn.textContent = this.sbagen?.isPlaying ? '⏹ Stop' : '▶ Play';
+      playBtn.textContent = this.sbagen?.isPlaying ? "⏹ Stop" : "▶ Play";
       playBtn.disabled = !this.info;
     }
   }
 
   updateTime(seconds) {
-    const timeDisplay = this.shadowRoot.querySelector('#timeDisplay');
+    const timeDisplay = this.shadowRoot.querySelector("#timeDisplay");
     if (timeDisplay) {
       const minutes = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
-      timeDisplay.textContent = `${minutes}:${String(secs).padStart(2, '0')}`;
+      timeDisplay.textContent = `${minutes}:${String(secs).padStart(2, "0")}`;
     }
   }
 
   setStatus(message) {
-    const statusEl = this.shadowRoot.querySelector('#status');
+    const statusEl = this.shadowRoot.querySelector("#status");
     if (statusEl) {
       statusEl.textContent = message;
     }
@@ -150,11 +154,11 @@ class SBaGenPlayer extends HTMLElement {
       <small id="status">Initializing...</small>
     `;
 
-    const playBtn = this.shadowRoot.querySelector('#playBtn');
-    playBtn.addEventListener('click', () => this.togglePlay());
+    const playBtn = this.shadowRoot.querySelector("#playBtn");
+    playBtn.addEventListener("click", () => this.togglePlay());
   }
 }
 
-customElements.define('sbagen-player', SBaGenPlayer);
+customElements.define("sbagen-player", SBaGenPlayer);
 
 export default SBaGenPlayer;

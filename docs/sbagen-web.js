@@ -266,8 +266,11 @@ export default class SBaGen {
       return;
     }
 
+    console.log('Playing file:', this.currentFile, 'from time:', this.elapsedTime);
+
     // Resume audio context if suspended
     if (this.audioContext.state === 'suspended') {
+      console.log('Resuming suspended audio context');
       await this.audioContext.resume();
     }
 
@@ -278,7 +281,9 @@ export default class SBaGen {
     // Generate a 60-second buffer once
     let audioBuffer;
     try {
+      console.log('Generating audio chunk...');
       const samples = await this.generateAudioChunk(this.elapsedTime, 60);
+      console.log('Generated', samples.length, 'samples');
 
       // Create AudioBuffer from samples
       audioBuffer = this.audioContext.createBuffer(
@@ -324,7 +329,32 @@ export default class SBaGen {
   }
 
   /**
-   * Stop playback
+   * Pause playback (keeps current time)
+   */
+  pause() {
+    if (!this.isPlaying) {
+      return;
+    }
+
+    this.isPlaying = false;
+
+    if (this.audioWorkletNode) {
+      if (this.audioWorkletNode.stop) {
+        this.audioWorkletNode.stop();
+      }
+      if (this.audioWorkletNode.disconnect) {
+        this.audioWorkletNode.disconnect();
+      }
+      this.audioWorkletNode = null;
+    }
+
+    this.elapsedTime = (Date.now() - this.startTime) / 1000;
+
+    this.emit('pause');
+  }
+
+  /**
+   * Stop playback (resets time to 0)
    */
   stop() {
     if (!this.isPlaying) {
@@ -343,7 +373,7 @@ export default class SBaGen {
       this.audioWorkletNode = null;
     }
 
-    this.elapsedTime = (Date.now() - this.startTime) / 1000;
+    this.elapsedTime = 0;
 
     this.emit('stop');
   }
