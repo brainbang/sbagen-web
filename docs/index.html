@@ -3,567 +3,323 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SBaGen WebAssembly Demo</title>
+    <title>SBaGen WebAssembly</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
     />
+    <style>
+      sbagen-player {
+        margin: 1rem 0;
+      }
+      #output {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+    </style>
   </head>
   <body>
     <main class="container">
-      <h1>SBaGen WebAssembly Demo</h1>
+      <h1>SBaGen WebAssembly</h1>
+      <p>Binaural beat generator compiled to WebAssembly with OGG support.</p>
 
-      <article id="status" aria-busy="true">
-        Loading WebAssembly module...
+      <article id="status">
+        <p>Initializing...</p>
       </article>
 
-      <label>
-        Choose an example:
-        <select id="exampleSelect" disabled>
-          <option value="">-- Select an example --</option>
-          <optgroup label="Basics">
-            <option value="examples/basics/prog-chakras-1.sbg">Chakras 1</option>
-            <option value="examples/basics/prog-spin-1.sbg">Spin 1</option>
-            <option value="examples/basics/ts-brain-alpha.sbg">Brain Alpha</option>
-            <option value="examples/basics/ts-brain-beta.sbg">Brain Beta</option>
-            <option value="examples/basics/ts-brain-delta.sbg">Brain Delta</option>
-            <option value="examples/basics/ts-brain-theta.sbg">Brain Theta</option>
-          </optgroup>
-          <optgroup label="Focus">
-            <option value="examples/focus/focus-03-a.sbg">Focus 03-A</option>
-            <option value="examples/focus/focus-03-b.sbg">Focus 03-B</option>
-            <option value="examples/focus/focus-10-a.sbg">Focus 10-A</option>
-            <option value="examples/focus/focus-10-b.sbg">Focus 10-B</option>
-            <option value="examples/focus/focus-12-a.sbg">Focus 12-A</option>
-            <option value="examples/focus/focus-12-b.sbg">Focus 12-B</option>
-            <option value="examples/focus/focus-15-a.sbg">Focus 15-A</option>
-            <option value="examples/focus/focus-15-b.sbg">Focus 15-B</option>
-            <option value="examples/focus/focus-21-a.sbg">Focus 21-A</option>
-            <option value="examples/focus/focus-21-b.sbg">Focus 21-B</option>
-            <option value="examples/focus/focus-21-c.sbg">Focus 21-C</option>
-            <option value="examples/focus/focus-22-b.sbg">Focus 22-B</option>
-            <option value="examples/focus/focus-23-a.sbg">Focus 23-A</option>
-            <option value="examples/focus/focus-23-b.sbg">Focus 23-B</option>
-            <option value="examples/focus/focus-24-a.sbg">Focus 24-A</option>
-            <option value="examples/focus/focus-24-b.sbg">Focus 24-B</option>
-            <option value="examples/focus/focus-25-a.sbg">Focus 25-A</option>
-            <option value="examples/focus/focus-26-a.sbg">Focus 26-A</option>
-            <option value="examples/focus/focus-26-b.sbg">Focus 26-B</option>
-            <option value="examples/focus/focus-27-b.sbg">Focus 27-B</option>
-            <option value="examples/focus/ts1-catnapper.sbg">Catnapper</option>
-            <option value="examples/focus/ts1-concentration.sbg">Concentration</option>
-            <option value="examples/focus/ts1-focus03.sbg">TS1 Focus 03</option>
-            <option value="examples/focus/ts1-focus10.sbg">TS1 Focus 10</option>
-            <option value="examples/focus/ts1-focus12.sbg">TS1 Focus 12</option>
-            <option value="examples/focus/ts1-focus15.sbg">TS1 Focus 15</option>
-            <option value="examples/focus/ts1-focus21.sbg">TS1 Focus 21</option>
-            <option value="examples/focus/ts1-homing.sbg">Homing</option>
-            <option value="examples/focus/ts1-intro.sbg">Intro</option>
-            <option value="examples/focus/wave-01.sbg">Wave 01</option>
-            <option value="examples/focus/wave-02.sbg">Wave 02</option>
-            <option value="examples/focus/wave-03.sbg">Wave 03</option>
-            <option value="examples/focus/wave-04.sbg">Wave 04</option>
-            <option value="examples/focus/wave-05.sbg">Wave 05</option>
-            <option value="examples/focus/wave-06.sbg">Wave 06</option>
-            <option value="examples/focus/wave-07.sbg">Wave 07</option>
-            <option value="examples/focus/wave-08.sbg">Wave 08</option>
-          </optgroup>
-          <optgroup label="Contrib">
-            <option value="examples/contrib/ch-aspirin.sbg">Aspirin</option>
-            <option value="examples/contrib/ch-awakened-mind.sbg">Awakened Mind</option>
-            <option value="examples/contrib/ch-einstein.sbg">Einstein</option>
-            <option value="examples/contrib/ch-inspiration.sbg">Inspiration</option>
-            <option value="examples/contrib/ch-obe.sbg">OBE</option>
-            <option value="examples/contrib/ch-runners-high.sbg">Runners High</option>
-            <option value="examples/contrib/ch-running-high.sbg">Running High</option>
-            <option value="examples/contrib/ch-schumann-cycle.sbg">Schumann Cycle</option>
-            <option value="examples/contrib/ch-sonic-caffeine.sbg">Sonic Caffeine</option>
-            <option value="examples/contrib/cjm-tempus-fugit.sbg">Tempus Fugit</option>
-            <option value="examples/contrib/cy-eye-refresher.sbg">Eye Refresher</option>
-            <option value="examples/contrib/cy-prana-energiser.sbg">Prana Energiser</option>
-            <option value="examples/contrib/kh-lost-storm.sbg">Lost Storm</option>
-            <option value="examples/contrib/ng-1.sbg">NG-1</option>
-            <option value="examples/contrib/rusty-1.sbg">Rusty-1</option>
-            <option value="examples/contrib/xota-powermed1-pink.sbg">Powermed1 Pink</option>
-            <option value="examples/contrib/zeljko.sbg">Zeljko</option>
-          </optgroup>
-          <optgroup label="Contrib - Jim">
-            <option value="examples/contrib/jim/prog-010221.sbg">010221</option>
-            <option value="examples/contrib/jim/prog-010301.sbg">010301</option>
-            <option value="examples/contrib/jim/prog-990102.sbg">990102</option>
-            <option value="examples/contrib/jim/prog-990103.sbg">990103</option>
-            <option value="examples/contrib/jim/prog-990104.sbg">990104</option>
-            <option value="examples/contrib/jim/prog-990105.sbg">990105</option>
-            <option value="examples/contrib/jim/prog-990106.sbg">990106</option>
-            <option value="examples/contrib/jim/prog-990107.sbg">990107</option>
-            <option value="examples/contrib/jim/prog-990108.sbg">990108</option>
-            <option value="examples/contrib/jim/prog-990111.sbg">990111</option>
-            <option value="examples/contrib/jim/prog-990112.sbg">990112</option>
-            <option value="examples/contrib/jim/prog-990118.sbg">990118</option>
-            <option value="examples/contrib/jim/prog-990209.sbg">990209</option>
-            <option value="examples/contrib/jim/prog-NSDWS-example.sbg">NSDWS Example</option>
-            <option value="examples/contrib/jim/prog-scan-1.sbg">Scan 1</option>
-            <option value="examples/contrib/jim/prog-tape-1-hp.sbg">Tape 1 HP</option>
-            <option value="examples/contrib/jim/prog-tape-1.sbg">Tape 1</option>
-            <option value="examples/contrib/jim/prog-tape-2.sbg">Tape 2</option>
-            <option value="examples/contrib/jim/prog-tape-3.sbg">Tape 3</option>
-            <option value="examples/contrib/jim/prog-test-wave.sbg">Test Wave</option>
-            <option value="examples/contrib/jim/ts-calm.sbg">Calm</option>
-            <option value="examples/contrib/jim/ts-calm2.sbg">Calm 2</option>
-            <option value="examples/contrib/jim/ts-mix1.sbg">Mix 1</option>
-            <option value="examples/contrib/jim/ts-purring-cat.sbg">Purring Cat</option>
-            <option value="examples/contrib/jim/ts-recharge.sbg">Recharge</option>
-            <option value="examples/contrib/jim/ts-test10.sbg">Test 10</option>
-            <option value="examples/contrib/jim/ts-test10b.sbg">Test 10B</option>
-            <option value="examples/contrib/jim/ts-test10c.sbg">Test 10C</option>
-            <option value="examples/contrib/jim/ts-truth-other.sbg">Truth Other</option>
-          </optgroup>
-          <optgroup label="Contrib - Ghostlab">
-            <option value="examples/contrib/ghostlab/bells-1.sbg">Bells 1</option>
-            <option value="examples/contrib/ghostlab/bells-2.sbg">Bells 2</option>
-            <option value="examples/contrib/ghostlab/bells-3.sbg">Bells 3</option>
-            <option value="examples/contrib/ghostlab/drop-001.sbg">Drop 001</option>
-            <option value="examples/contrib/ghostlab/drop-002.sbg">Drop 002</option>
-            <option value="examples/contrib/ghostlab/drop-007.sbg">Drop 007</option>
-            <option value="examples/contrib/ghostlab/drop-008.sbg">Drop 008</option>
-            <option value="examples/contrib/ghostlab/drop-009.sbg">Drop 009</option>
-            <option value="examples/contrib/ghostlab/drop-010.sbg">Drop 010</option>
-            <option value="examples/contrib/ghostlab/drop-011.sbg">Drop 011</option>
-            <option value="examples/contrib/ghostlab/drop-012.sbg">Drop 012</option>
-            <option value="examples/contrib/ghostlab/drop-013.sbg">Drop 013</option>
-            <option value="examples/contrib/ghostlab/drop-014.sbg">Drop 014</option>
-            <option value="examples/contrib/ghostlab/mod-003.sbg">Mod 003</option>
-            <option value="examples/contrib/ghostlab/mod-004.sbg">Mod 004</option>
-            <option value="examples/contrib/ghostlab/mod-005.sbg">Mod 005</option>
-            <option value="examples/contrib/ghostlab/mod-006.sbg">Mod 006</option>
-            <option value="examples/contrib/ghostlab/mod-12-0.sbg">Mod 12-0</option>
-            <option value="examples/contrib/ghostlab/mod-7-83.sbg">Mod 7-83</option>
-            <option value="examples/contrib/ghostlab/modulations-1.sbg">Modulations 1</option>
-            <option value="examples/contrib/ghostlab/modulations-2.sbg">Modulations 2</option>
-            <option value="examples/contrib/ghostlab/modulations-3.sbg">Modulations 3</option>
-            <option value="examples/contrib/ghostlab/modulations-4.sbg">Modulations 4</option>
-            <option value="examples/contrib/ghostlab/modulations-5.sbg">Modulations 5</option>
-            <option value="examples/contrib/ghostlab/modulations-6.sbg">Modulations 6</option>
-            <option value="examples/contrib/ghostlab/modulations-7.sbg">Modulations 7</option>
-            <option value="examples/contrib/ghostlab/planets.sbg">Planets</option>
-            <option value="examples/contrib/ghostlab/pulse-1.sbg">Pulse 1</option>
-            <option value="examples/contrib/ghostlab/pulse-2.sbg">Pulse 2</option>
-            <option value="examples/contrib/ghostlab/pulse-3.sbg">Pulse 3</option>
-            <option value="examples/contrib/ghostlab/pulse-4.sbg">Pulse 4</option>
-            <option value="examples/contrib/ghostlab/pulse-5.sbg">Pulse 5</option>
-            <option value="examples/contrib/ghostlab/pulse-6.sbg">Pulse 6</option>
-            <option value="examples/contrib/ghostlab/pulse-7.sbg">Pulse 7</option>
-            <option value="examples/contrib/ghostlab/shaman-dance.sbg">Shaman Dance</option>
-            <option value="examples/contrib/ghostlab/shaman-epileptic.sbg">Shaman Epileptic</option>
-            <option value="examples/contrib/ghostlab/shaman.sbg">Shaman</option>
-          </optgroup>
-        </select>
-      </label>
-      <p>
-        <small>Or load your own:</small>
-      </p>
-      <label>
-        <input type="file" id="fileInput" accept=".sbg,.txt" disabled />
-      </label>
+      <article>
+        <h2>Quick Start</h2>
+        <p>Select a pre-loaded example or upload your own .sbg file:</p>
 
-      <div id="playControls" style="display: none">
-        <button id="playBtn">▶ Play (Infinite)</button>
-        <button id="stopBtn" style="display: none">⏹ Stop</button>
-        <span id="timeDisplay" style="margin-left: 10px"></span>
-      </div>
+        <label>
+          Choose an example:
+          <select id="exampleSelect" disabled>
+            <option value="">-- Select an example --</option>
+            <optgroup label="Basics">
+              <option value="examples/basics/prog-chakras-1.sbg">Chakras 1</option>
+              <option value="examples/basics/prog-drop-00d.sbg">Drop 00d (with OGG)</option>
+              <option value="examples/basics/prog-drop-old-demo.sbg">Drop Old Demo (with OGG)</option>
+              <option value="examples/basics/prog-slide-alpha-10.sbg">Slide Alpha 10 (with OGG)</option>
+              <option value="examples/basics/prog-slide-beta-16.sbg">Slide Beta 16 (with OGG)</option>
+              <option value="examples/basics/prog-spin-1.sbg">Spin 1</option>
+              <option value="examples/basics/ts-brain-alpha.sbg">Brain Alpha</option>
+              <option value="examples/basics/ts-brain-beta.sbg">Brain Beta</option>
+              <option value="examples/basics/ts-brain-delta.sbg">Brain Delta</option>
+              <option value="examples/basics/ts-brain-theta.sbg">Brain Theta</option>
+            </optgroup>
+            <optgroup label="Focus">
+              <option value="examples/focus/focus-03-a.sbg">Focus 03-A</option>
+              <option value="examples/focus/focus-03-b.sbg">Focus 03-B</option>
+              <option value="examples/focus/focus-10-a.sbg">Focus 10-A</option>
+              <option value="examples/focus/focus-10-b.sbg">Focus 10-B</option>
+              <option value="examples/focus/focus-12-a.sbg">Focus 12-A</option>
+              <option value="examples/focus/focus-12-b.sbg">Focus 12-B</option>
+              <option value="examples/focus/focus-15-a.sbg">Focus 15-A</option>
+              <option value="examples/focus/focus-15-b.sbg">Focus 15-B</option>
+              <option value="examples/focus/focus-21-a.sbg">Focus 21-A</option>
+              <option value="examples/focus/focus-21-b.sbg">Focus 21-B</option>
+              <option value="examples/focus/focus-21-c.sbg">Focus 21-C</option>
+              <option value="examples/focus/focus-22-b.sbg">Focus 22-B</option>
+              <option value="examples/focus/focus-23-a.sbg">Focus 23-A</option>
+              <option value="examples/focus/focus-23-b.sbg">Focus 23-B</option>
+              <option value="examples/focus/focus-24-a.sbg">Focus 24-A</option>
+              <option value="examples/focus/focus-24-b.sbg">Focus 24-B</option>
+              <option value="examples/focus/focus-25-a.sbg">Focus 25-A</option>
+              <option value="examples/focus/focus-26-a.sbg">Focus 26-A</option>
+              <option value="examples/focus/focus-26-b.sbg">Focus 26-B</option>
+              <option value="examples/focus/focus-27-b.sbg">Focus 27-B</option>
+              <option value="examples/focus/ts1-catnapper.sbg">Catnapper</option>
+              <option value="examples/focus/ts1-concentration.sbg">Concentration</option>
+              <option value="examples/focus/ts1-focus03.sbg">TS1 Focus 03</option>
+              <option value="examples/focus/ts1-focus10.sbg">TS1 Focus 10</option>
+              <option value="examples/focus/ts1-focus12.sbg">TS1 Focus 12</option>
+              <option value="examples/focus/ts1-focus15.sbg">TS1 Focus 15</option>
+              <option value="examples/focus/ts1-focus21.sbg">TS1 Focus 21</option>
+              <option value="examples/focus/ts1-homing.sbg">Homing</option>
+              <option value="examples/focus/ts1-intro.sbg">Intro</option>
+              <option value="examples/focus/wave-01.sbg">Wave 01</option>
+              <option value="examples/focus/wave-02.sbg">Wave 02</option>
+              <option value="examples/focus/wave-03.sbg">Wave 03</option>
+              <option value="examples/focus/wave-04.sbg">Wave 04</option>
+              <option value="examples/focus/wave-05.sbg">Wave 05</option>
+              <option value="examples/focus/wave-06.sbg">Wave 06</option>
+              <option value="examples/focus/wave-07.sbg">Wave 07</option>
+              <option value="examples/focus/wave-08.sbg">Wave 08</option>
+            </optgroup>
+            <optgroup label="Contrib">
+              <option value="examples/contrib/ch-aspirin.sbg">Aspirin</option>
+              <option value="examples/contrib/ch-awakened-mind.sbg">Awakened Mind</option>
+              <option value="examples/contrib/ch-einstein.sbg">Einstein</option>
+              <option value="examples/contrib/ch-inspiration.sbg">Inspiration</option>
+              <option value="examples/contrib/ch-obe.sbg">OBE</option>
+              <option value="examples/contrib/ch-runners-high.sbg">Runners High</option>
+              <option value="examples/contrib/ch-running-high.sbg">Running High</option>
+              <option value="examples/contrib/ch-schumann-cycle.sbg">Schumann Cycle</option>
+              <option value="examples/contrib/ch-sonic-caffeine.sbg">Sonic Caffeine</option>
+              <option value="examples/contrib/cjm-tempus-fugit.sbg">Tempus Fugit</option>
+              <option value="examples/contrib/cy-eye-refresher.sbg">Eye Refresher</option>
+              <option value="examples/contrib/cy-prana-energiser.sbg">Prana Energiser</option>
+              <option value="examples/contrib/kh-lost-storm.sbg">Lost Storm</option>
+              <option value="examples/contrib/ng-1.sbg">NG-1</option>
+              <option value="examples/contrib/rusty-1.sbg">Rusty-1</option>
+              <option value="examples/contrib/xota-powermed1-pink.sbg">Powermed1 Pink</option>
+              <option value="examples/contrib/zeljko.sbg">Zeljko</option>
+            </optgroup>
+            <optgroup label="Contrib - Jim">
+              <option value="examples/contrib/jim/prog-010221.sbg">010221</option>
+              <option value="examples/contrib/jim/prog-010301.sbg">010301</option>
+              <option value="examples/contrib/jim/prog-990102.sbg">990102</option>
+              <option value="examples/contrib/jim/prog-990103.sbg">990103</option>
+              <option value="examples/contrib/jim/prog-990104.sbg">990104</option>
+              <option value="examples/contrib/jim/prog-990105.sbg">990105</option>
+              <option value="examples/contrib/jim/prog-990106.sbg">990106</option>
+              <option value="examples/contrib/jim/prog-990107.sbg">990107</option>
+              <option value="examples/contrib/jim/prog-990108.sbg">990108</option>
+              <option value="examples/contrib/jim/prog-990111.sbg">990111</option>
+              <option value="examples/contrib/jim/prog-990112.sbg">990112</option>
+              <option value="examples/contrib/jim/prog-990118.sbg">990118</option>
+              <option value="examples/contrib/jim/prog-990209.sbg">990209</option>
+              <option value="examples/contrib/jim/prog-NSDWS-example.sbg">NSDWS Example</option>
+              <option value="examples/contrib/jim/prog-scan-1.sbg">Scan 1</option>
+              <option value="examples/contrib/jim/prog-tape-1-hp.sbg">Tape 1 HP</option>
+              <option value="examples/contrib/jim/prog-tape-1.sbg">Tape 1</option>
+              <option value="examples/contrib/jim/prog-tape-2.sbg">Tape 2</option>
+              <option value="examples/contrib/jim/prog-tape-3.sbg">Tape 3</option>
+              <option value="examples/contrib/jim/prog-test-wave.sbg">Test Wave</option>
+              <option value="examples/contrib/jim/ts-calm.sbg">Calm</option>
+              <option value="examples/contrib/jim/ts-calm2.sbg">Calm 2</option>
+              <option value="examples/contrib/jim/ts-mix1.sbg">Mix 1</option>
+              <option value="examples/contrib/jim/ts-purring-cat.sbg">Purring Cat</option>
+              <option value="examples/contrib/jim/ts-recharge.sbg">Recharge</option>
+              <option value="examples/contrib/jim/ts-test10.sbg">Test 10</option>
+              <option value="examples/contrib/jim/ts-test10b.sbg">Test 10B</option>
+              <option value="examples/contrib/jim/ts-test10c.sbg">Test 10C</option>
+              <option value="examples/contrib/jim/ts-truth-other.sbg">Truth Other</option>
+            </optgroup>
+            <optgroup label="Contrib - Ghostlab">
+              <option value="examples/contrib/ghostlab/bells-1.sbg">Bells 1</option>
+              <option value="examples/contrib/ghostlab/bells-2.sbg">Bells 2</option>
+              <option value="examples/contrib/ghostlab/bells-3.sbg">Bells 3</option>
+              <option value="examples/contrib/ghostlab/drop-001.sbg">Drop 001</option>
+              <option value="examples/contrib/ghostlab/drop-002.sbg">Drop 002</option>
+              <option value="examples/contrib/ghostlab/drop-007.sbg">Drop 007</option>
+              <option value="examples/contrib/ghostlab/drop-008.sbg">Drop 008</option>
+              <option value="examples/contrib/ghostlab/drop-009.sbg">Drop 009</option>
+              <option value="examples/contrib/ghostlab/drop-010.sbg">Drop 010</option>
+              <option value="examples/contrib/ghostlab/drop-011.sbg">Drop 011</option>
+              <option value="examples/contrib/ghostlab/drop-012.sbg">Drop 012</option>
+              <option value="examples/contrib/ghostlab/drop-013.sbg">Drop 013</option>
+              <option value="examples/contrib/ghostlab/drop-014.sbg">Drop 014</option>
+              <option value="examples/contrib/ghostlab/mod-003.sbg">Mod 003</option>
+              <option value="examples/contrib/ghostlab/mod-004.sbg">Mod 004</option>
+              <option value="examples/contrib/ghostlab/mod-005.sbg">Mod 005</option>
+              <option value="examples/contrib/ghostlab/mod-006.sbg">Mod 006</option>
+              <option value="examples/contrib/ghostlab/mod-12-0.sbg">Mod 12-0</option>
+              <option value="examples/contrib/ghostlab/mod-7-83.sbg">Mod 7-83</option>
+              <option value="examples/contrib/ghostlab/modulations-1.sbg">Modulations 1</option>
+              <option value="examples/contrib/ghostlab/modulations-2.sbg">Modulations 2</option>
+              <option value="examples/contrib/ghostlab/modulations-3.sbg">Modulations 3</option>
+              <option value="examples/contrib/ghostlab/modulations-4.sbg">Modulations 4</option>
+              <option value="examples/contrib/ghostlab/modulations-5.sbg">Modulations 5</option>
+              <option value="examples/contrib/ghostlab/modulations-6.sbg">Modulations 6</option>
+              <option value="examples/contrib/ghostlab/modulations-7.sbg">Modulations 7</option>
+              <option value="examples/contrib/ghostlab/planets.sbg">Planets</option>
+              <option value="examples/contrib/ghostlab/pulse-1.sbg">Pulse 1</option>
+              <option value="examples/contrib/ghostlab/pulse-2.sbg">Pulse 2</option>
+              <option value="examples/contrib/ghostlab/pulse-3.sbg">Pulse 3</option>
+              <option value="examples/contrib/ghostlab/pulse-4.sbg">Pulse 4</option>
+              <option value="examples/contrib/ghostlab/pulse-5.sbg">Pulse 5</option>
+              <option value="examples/contrib/ghostlab/pulse-6.sbg">Pulse 6</option>
+              <option value="examples/contrib/ghostlab/pulse-7.sbg">Pulse 7</option>
+              <option value="examples/contrib/ghostlab/shaman-dance.sbg">Shaman Dance</option>
+              <option value="examples/contrib/ghostlab/shaman-epileptic.sbg">Shaman Epileptic</option>
+              <option value="examples/contrib/ghostlab/shaman.sbg">Shaman</option>
+            </optgroup>
+          </select>
+        </label>
+        <p>
+          <small>Or load your own:</small>
+        </p>
+        <label>
+          <input type="file" id="fileInput" accept=".sbg,.txt" disabled />
+        </label>
 
-      <pre id="output"></pre>
+        <div id="playControls" style="display: none; margin-top: 1rem;">
+          <button id="playBtn">▶ Play</button>
+          <button id="stopBtn" style="display: none">⏹ Stop</button>
+          <span id="timeDisplay" style="margin-left: 10px; font-variant-numeric: tabular-nums;">0:00</span>
+        </div>
+      </article>
+
+      <article>
+        <details>
+          <summary>Sequence Information</summary>
+          <div id="info"></div>
+        </details>
+        <details>
+          <summary>Sequence File Content</summary>
+          <pre id="output" style="white-space: pre-wrap;"></pre>
+        </details>
+      </article>
+
+      <footer>
+        <small>
+          <a href="https://uazu.net/sbagen/">SBaGen</a> (Sequenced Binaural Beat
+          Generator) compiled to WebAssembly.
+          <a href="demo.html">View API Demo</a> |
+          <a href="https://github.com/brainbang/sbagen_idoser" target="_blank">Get more sequences</a>
+        </small>
+      </footer>
+    </main>
 
     <script type="module">
-      // Import the WASM module
-      import createSBaGenModule from "./sbagen/sbagen.mjs";
+      import SBaGen from './sbagen-web.js';
 
-      const statusEl = document.getElementById("status");
-      const outputEl = document.getElementById("output");
-      const fileInput = document.getElementById("fileInput");
-      const exampleSelect = document.getElementById("exampleSelect");
-      const playControls = document.getElementById("playControls");
-      const playBtn = document.getElementById("playBtn");
-      const stopBtn = document.getElementById("stopBtn");
-      const timeDisplay = document.getElementById("timeDisplay");
+      const statusEl = document.getElementById('status');
+      const exampleSelect = document.getElementById('exampleSelect');
+      const fileInput = document.getElementById('fileInput');
+      const playControls = document.getElementById('playControls');
+      const playBtn = document.getElementById('playBtn');
+      const stopBtn = document.getElementById('stopBtn');
+      const timeDisplay = document.getElementById('timeDisplay');
+      const infoDiv = document.getElementById('info');
+      const outputEl = document.getElementById('output');
 
-      let Module;
-      let output = "";
-      let currentFile = null;
-      let audioContext = null;
-      let audioWorkletNode = null;
-      let isPlaying = false;
+      let sbagen = null;
 
-      function captureOutput(text) {
-        output += text + "\n";
-        outputEl.textContent = output;
-      }
+      // Initialize
+      (async () => {
+        try {
+          statusEl.innerHTML = '<p>Initializing SBaGen WebAssembly module...</p>';
+          sbagen = await SBaGen.create();
 
-      try {
-        // Initialize the module
-        Module = await createSBaGenModule({
-          print: captureOutput,
-          printErr: captureOutput,
-          noInitialRun: true,
-        });
+          statusEl.innerHTML = '<p>✓ Ready - choose an example or load your own file</p>';
+          exampleSelect.disabled = false;
+          fileInput.disabled = false;
 
-        // Ensure FS is available
-        if (!Module.FS) {
-          throw new Error("Filesystem not available in module");
-        }
-
-        statusEl.removeAttribute("aria-busy");
-        statusEl.textContent = "Ready - choose an example or load your own file";
-        fileInput.disabled = false;
-        exampleSelect.disabled = false;
-
-        // Shared function to load and process a file
-        async function loadSequenceFile(filename, arrayBuffer) {
-          try {
-            // Clear any previous errors
-            statusEl.removeAttribute("aria-busy");
-            statusEl.innerHTML = "";
-
-            // Stop current playback if playing
-            if (isPlaying) {
-              isPlaying = false;
-              if (audioWorkletNode) {
-                audioWorkletNode.port.postMessage({ type: "stop" });
-                audioWorkletNode.disconnect();
-                audioWorkletNode = null;
-              }
-              playBtn.style.display = "inline-block";
-              stopBtn.style.display = "none";
-              timeDisplay.textContent = "";
-            }
-
-            // Reset audio buffer for new file
-            audioBuffer = null;
-
-            output = "";
-            outputEl.textContent = "Loading and validating file...\n";
-
-            const uint8Array = new Uint8Array(arrayBuffer);
-
-            // Write file to Emscripten virtual filesystem
-            // Delete if exists first
-            try {
-              Module.FS.unlink(`/${filename}`);
-            } catch (e) {
-              // File doesn't exist, that's fine
-            }
-            Module.FS.writeFile(`/${filename}`, uint8Array);
-            currentFile = filename;
-
-            // Show the file contents in output
-            const text = new TextDecoder().decode(uint8Array);
-            outputEl.textContent = text;
-
-            // Parse for .ogg file references and load them
-            try {
-              const oggMatches = text.match(/[\w\-]+\.ogg/g);
-              if (oggMatches) {
-                const uniqueOggs = [...new Set(oggMatches)];
-                for (const oggFile of uniqueOggs) {
-                  try {
-                    const oggResponse = await fetch(`examples/${oggFile}`);
-                    if (oggResponse.ok) {
-                      const oggData = await oggResponse.arrayBuffer();
-                      Module.FS.writeFile(`/${oggFile}`, new Uint8Array(oggData));
-                    }
-                  } catch (err) {
-                    // Ignore individual .ogg file errors
-                  }
-                }
-              }
-            } catch (err) {
-              // Ignore .ogg parsing errors
-            }
-
-            // Initialize audio context and load worklet
-            if (!audioContext) {
-              audioContext = new AudioContext();
-              try {
-                await audioContext.audioWorklet.addModule("audio-processor.js");
-              } catch (err) {
-                statusEl.innerHTML = `<mark>Failed to load audio processor: ${err.message}</mark>`;
-                return;
-              }
-            }
-
-            // Show play controls
-            playControls.style.display = "block";
-          } catch (error) {
-            // Extract useful error information
-            let errorMsg = "Unknown error";
-            let errorDetails = "";
-
-            if (error) {
-              if (error.message) {
-                errorMsg = error.message;
-              } else if (typeof error === "string") {
-                errorMsg = error;
-              } else if (error.toString && error.toString() !== "[object Object]") {
-                errorMsg = error.toString();
-              }
-
-              if (error.stack) {
-                errorDetails = error.stack;
-              } else {
-                try {
-                  errorDetails = JSON.stringify(error, null, 2);
-                } catch (e) {
-                  errorDetails = String(error);
-                }
-              }
-            }
-
-            statusEl.innerHTML = `<mark>Error loading file: ${errorMsg}</mark>`;
-            output = `Error: ${errorMsg}\n\n${errorDetails}\n`;
-            outputEl.textContent = output;
-          }
-        }
-
-        // Example select handler
-        exampleSelect.addEventListener("change", async (e) => {
-          const examplePath = e.target.value;
-          if (!examplePath) return;
-
-          try {
-            const response = await fetch(examplePath);
-            if (!response.ok) {
-              throw new Error(`Failed to load example: ${response.statusText}`);
-            }
-            const arrayBuffer = await response.arrayBuffer();
-            const filename = examplePath.split("/").pop();
-            await loadSequenceFile(filename, arrayBuffer);
-          } catch (error) {
-            let errorMsg = "Unknown error";
-            if (error?.message) errorMsg = error.message;
-            else if (typeof error === "string") errorMsg = error;
-
-            statusEl.innerHTML = `<mark>Error loading example: ${errorMsg}</mark>`;
-            outputEl.textContent = `Error: ${errorMsg}\n${error?.stack || ""}`;
-          }
-        });
-
-        // File input handler
-        fileInput.addEventListener("change", async (e) => {
-          const file = e.target.files[0];
-          if (!file) return;
-
-          const arrayBuffer = await file.arrayBuffer();
-          await loadSequenceFile(file.name, arrayBuffer);
-        });
-
-        let audioBuffer = null;
-
-        // Generate a long audio buffer to loop
-        async function generateAudioBuffer() {
-          // Capture sbagen output for debugging
-          let sbagenOutput = "";
-
-          // Create a fresh module instance
-          const tempModule = await createSBaGenModule({
-            print: (text) => { sbagenOutput += text + "\n"; },
-            printErr: (text) => { sbagenOutput += "ERROR: " + text + "\n"; },
-            noInitialRun: true,
+          // Set up event listeners
+          sbagen.on('play', () => {
+            playBtn.style.display = 'none';
+            stopBtn.style.display = 'inline-block';
           });
 
-          // Copy the sequence file
-          const fileData = Module.FS.readFile(`/${currentFile}`);
-          tempModule.FS.writeFile(`/${currentFile}`, fileData);
+          sbagen.on('stop', () => {
+            playBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'none';
+          });
 
-          // Copy any .ogg files from main module to temp module
-          try {
-            const files = Module.FS.readdir('/');
-            for (const file of files) {
-              if (file && typeof file === 'string' && file.endsWith('.ogg')) {
-                try {
-                  const stat = Module.FS.stat(`/${file}`);
-                  if (Module.FS.isFile(stat.mode)) {
-                    const oggData = Module.FS.readFile(`/${file}`);
-                    tempModule.FS.writeFile(`/${file}`, oggData);
-                  }
-                } catch (err) {
-                  // Skip this file
-                }
-              }
-            }
-          } catch (e) {
-            // Ignore if no .ogg files
-          }
+          sbagen.on('timeupdate', (time) => {
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            timeDisplay.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
+          });
 
-          try {
-            // Generate 5 minutes from the start
-            tempModule.callMain([
-              "-o",
-              "/audio.raw",
-              "-S",
-              "-L",
-              "00:05:00",
-              `/${currentFile}`,
-            ]);
-          } catch (e) {
-            // Exit is normal for sbagen
-          }
+          sbagen.on('generating', () => {
+            statusEl.innerHTML = '<p aria-busy="true">Generating audio (60 seconds)...</p>';
+          });
 
-          // Check if audio was generated
-          let audioFileExists = false;
-          let audioFileSize = 0;
-
-          try {
-            const stat = tempModule.FS.stat("/audio.raw");
-            audioFileExists = true;
-            audioFileSize = stat.size;
-          } catch (e) {
-            // File doesn't exist
-          }
-
-          if (!audioFileExists || audioFileSize === 0) {
-            let errorMsg = "SBaGen failed to generate audio.";
-            if (sbagenOutput.trim()) {
-              errorMsg += "\n\nSBaGen output:\n" + sbagenOutput;
-            }
-            if (!audioFileExists) {
-              errorMsg += "\n\nThe audio file was not created. This usually means the sequence file has errors or references unsupported features (like OGG files without OGG support compiled in).";
-            } else {
-              errorMsg += "\n\nThe audio file is empty.";
-            }
-            throw new Error(errorMsg);
-          }
-
-          // Read and convert
-          const rawData = tempModule.FS.readFile("/audio.raw");
-
-          const samples = new Int16Array(
-            rawData.buffer,
-            rawData.byteOffset,
-            rawData.byteLength / 2,
-          );
-
-          // Convert to float32 (interleaved stereo)
-          const floatSamples = new Float32Array(samples.length);
-          for (let i = 0; i < samples.length; i++) {
-            floatSamples[i] = samples[i] / 32768.0;
-          }
-
-          return floatSamples;
+        } catch (error) {
+          statusEl.innerHTML = `<mark>Error: ${error.message}</mark>`;
         }
+      })();
 
-        // Play button handler - generate once and loop
-        playBtn.addEventListener("click", async () => {
-          if (!currentFile || isPlaying) return;
+      // Load sequence
+      async function loadSequence(source, filename) {
+        try {
+          statusEl.innerHTML = '<p aria-busy="true">Loading...</p>';
 
-          try {
-            playBtn.disabled = true;
-            playBtn.textContent = "⏳ Generating...";
+          const info = await sbagen.load(source);
 
-            // Resume audio context if suspended
-            if (audioContext.state === "suspended") {
-              await audioContext.resume();
-            }
+          statusEl.innerHTML = '<p>✓ Loaded - ready to play</p>';
+          playControls.style.display = 'block';
 
-            // Generate 5-minute buffer
-            if (!audioBuffer) {
-              audioBuffer = await generateAudioBuffer();
-            }
+          // Show info
+          const duration = info.estimatedDuration;
+          const minutes = Math.floor(duration / 60);
+          const seconds = duration % 60;
 
-            // Create worklet node with stereo output
-            audioWorkletNode = new AudioWorkletNode(
-              audioContext,
-              "sbagen-processor",
-              {
-                numberOfInputs: 0,
-                numberOfOutputs: 1,
-                outputChannelCount: [2],
-              },
-            );
-            audioWorkletNode.connect(audioContext.destination);
+          infoDiv.innerHTML = `
+            <p><strong>File:</strong> ${info.filename}</p>
+            <p><strong>Estimated Duration:</strong> ${minutes}:${String(seconds).padStart(2, '0')}</p>
+            ${info.description ? `<p><strong>Description:</strong></p><pre style="white-space: pre-wrap;">${info.description}</pre>` : ''}
+          `;
 
-            // Handle worklet messages - loop the buffer
-            audioWorkletNode.port.onmessage = async (e) => {
-              if (e.data.type === "needsData" && isPlaying) {
-                // Send the same buffer again to loop
-                audioWorkletNode.port.postMessage({
-                  type: "audio",
-                  samples: audioBuffer,
-                });
-              }
-            };
+          outputEl.textContent = info.content;
 
-            // Send initial buffer
-            audioWorkletNode.port.postMessage({
-              type: "audio",
-              samples: audioBuffer,
-            });
-
-            // Pre-send buffer again for seamless loop
-            audioWorkletNode.port.postMessage({
-              type: "audio",
-              samples: audioBuffer,
-            });
-
-            isPlaying = true;
-            playBtn.style.display = "none";
-            stopBtn.style.display = "inline-block";
-            playBtn.disabled = false;
-            playBtn.textContent = "▶ Play (Infinite)";
-
-            // Update time display
-            const startTime = Date.now();
-            const updateTime = () => {
-              if (isPlaying) {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                const minutes = Math.floor(elapsed / 60);
-                const seconds = elapsed % 60;
-                timeDisplay.textContent = `${minutes}:${String(seconds).padStart(2, "0")}`;
-                requestAnimationFrame(updateTime);
-              }
-            };
-            updateTime();
-          } catch (error) {
-            let errorMsg = "Unknown error";
-            if (error?.message) errorMsg = error.message;
-            else if (typeof error === "string") errorMsg = error;
-
-            statusEl.innerHTML = `<mark>Error starting playback: ${errorMsg}</mark>`;
-            outputEl.textContent = `Error: ${errorMsg}\n${error?.stack || ""}`;
-            playBtn.disabled = false;
-            playBtn.textContent = "▶ Play (Infinite)";
-            isPlaying = false;
-          }
-        });
-
-        // Stop button handler
-        stopBtn.addEventListener("click", () => {
-          isPlaying = false;
-
-          if (audioWorkletNode) {
-            audioWorkletNode.port.postMessage({ type: "stop" });
-            audioWorkletNode.disconnect();
-            audioWorkletNode = null;
-          }
-
-          playBtn.style.display = "inline-block";
-          stopBtn.style.display = "none";
-          timeDisplay.textContent = "";
-        });
-      } catch (error) {
-        statusEl.removeAttribute("aria-busy");
-        statusEl.innerHTML = `<mark>Error loading WebAssembly module: ${error.message}</mark>`;
+        } catch (error) {
+          statusEl.innerHTML = `<mark>Error: ${error.message}</mark>`;
+        }
       }
-    </script>
 
-    <footer>
-      <small>
-        <a href="https://uazu.net/sbagen/">SBaGen</a> (Sequenced Binaural Beat
-        Generator) compiled to WebAssembly. Get sequence files from
-        <a target="_blank" href="https://github.com/brainbang/sbagen_idoser"
-          >sbagen_idoser</a
-        >.
-      </small>
-    </footer>
-    </main>
+      // Example select
+      exampleSelect.addEventListener('change', (e) => {
+        const src = e.target.value;
+        if (src && sbagen) {
+          loadSequence(src);
+        }
+      });
+
+      // File input
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file && sbagen) {
+          loadSequence(file);
+        }
+      });
+
+      // Play button
+      playBtn.addEventListener('click', async () => {
+        try {
+          await sbagen.play();
+        } catch (error) {
+          statusEl.innerHTML = `<mark>Error: ${error.message}</mark>`;
+        }
+      });
+
+      // Stop button
+      stopBtn.addEventListener('click', () => {
+        sbagen.stop();
+      });
+    </script>
   </body>
 </html>

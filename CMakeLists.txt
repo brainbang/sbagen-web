@@ -25,19 +25,46 @@ if(BUILD_WASM)
     if(EMSCRIPTEN)
         message(STATUS "Using Emscripten toolchain with ES6 modules and SDL2")
 
-        # Export functions that will be callable from JavaScript
-        set_target_properties(sbagen PROPERTIES
-            LINK_FLAGS "-s WASM=1 \
-                        -s EXPORTED_FUNCTIONS='[\"_main\"]' \
-                        -s EXPORTED_RUNTIME_METHODS='[\"callMain\",\"FS\"]' \
-                        -s ALLOW_MEMORY_GROWTH=1 \
-                        -s MODULARIZE=1 \
-                        -s EXPORT_ES6=1 \
-                        -s EXPORT_NAME='createSBaGenModule' \
-                        -s ENVIRONMENT='web,worker' \
-                        -s FILESYSTEM=1 \
-                        -s EXIT_RUNTIME=0"
-        )
+        # Enable OGG support for WASM builds using Emscripten ports
+        if(ENABLE_OGG)
+            message(STATUS "Enabling OGG support via Emscripten ports")
+            target_compile_definitions(sbagen PRIVATE OGG_DECODE)
+
+            # Add Emscripten port flags for compile and link
+            target_compile_options(sbagen PRIVATE -sUSE_VORBIS=1 -sUSE_OGG=1 -pthread)
+
+            # Use Emscripten's port system for vorbis/ogg
+            set_target_properties(sbagen PROPERTIES
+                LINK_FLAGS "-s WASM=1 \
+                            -s EXPORTED_FUNCTIONS='[\"_main\"]' \
+                            -s EXPORTED_RUNTIME_METHODS='[\"callMain\",\"FS\"]' \
+                            -s ALLOW_MEMORY_GROWTH=1 \
+                            -s MODULARIZE=1 \
+                            -s EXPORT_ES6=1 \
+                            -s EXPORT_NAME='createSBaGenModule' \
+                            -s ENVIRONMENT='web,worker' \
+                            -s FILESYSTEM=1 \
+                            -s EXIT_RUNTIME=0 \
+                            -s USE_VORBIS=1 \
+                            -s USE_OGG=1 \
+                            -s PTHREAD_POOL_SIZE=4 \
+                            -pthread"
+            )
+        else()
+            # Export functions that will be callable from JavaScript
+            set_target_properties(sbagen PROPERTIES
+                LINK_FLAGS "-s WASM=1 \
+                            -s EXPORTED_FUNCTIONS='[\"_main\"]' \
+                            -s EXPORTED_RUNTIME_METHODS='[\"callMain\",\"FS\"]' \
+                            -s ALLOW_MEMORY_GROWTH=1 \
+                            -s MODULARIZE=1 \
+                            -s EXPORT_ES6=1 \
+                            -s EXPORT_NAME='createSBaGenModule' \
+                            -s ENVIRONMENT='web,worker' \
+                            -s FILESYSTEM=1 \
+                            -s EXIT_RUNTIME=0"
+            )
+        endif()
 
         # Enable pthread if needed
         # target_link_options(sbagen PRIVATE "-pthread")

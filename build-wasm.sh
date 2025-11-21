@@ -33,6 +33,7 @@ cd "$BUILD_DIR"
 
 # Configure (need to go up two levels since BUILD_DIR is docs/sbagen)
 emcmake cmake -DBUILD_WASM=ON \
+              -DENABLE_OGG=ON \
               -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
               ../..
 

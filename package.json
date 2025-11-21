@@ -1,7 +1,7 @@
 {
   "tyoe": "module",
   "scripts": {
-    "start": "npx -y live-server docs",
+    "start": "node dev.js",
     "build": "./build-wasm.sh"
   }
 }
