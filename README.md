@@ -4,7 +4,7 @@ This allows you to run [sbagen](https://uazu.net/sbagen/) on the web!
 
 Jim Peters wrote the original, and it's pretty much the best at producing binaural beats. I did a little bit of modification to get it running on web.
 
-If you want some config files for it, check out [sbagen_idoser](https://github.com/brainbang/sbagen_idoser). They are not really "digital drugs", but definitely have an effect.
+If you want some config files for it, check out [sbagen_idoser](https://github.com/brainbang/sbagen_idoser). They are not really "digital drugs", but definitely have an effect. There are also a bunch of [examples](examples).
 
 JavaScript library and web component for binaural beat generation in the browser using SBaGen compiled to WebAssembly.
 
