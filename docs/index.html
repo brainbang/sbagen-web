@@ -8,6 +8,14 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
     />
+    <style>
+      footer {
+        text-align: center;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
   </head>
   <body>
     <main class="container-fluid">
@@ -292,6 +300,7 @@
           </optgroup>
         </select>
       </label>
+      <button id="buttonStop" class="hidden">Stop</button>
     </main>
 
     <footer class="container-fluid">
@@ -323,24 +332,31 @@
         player.addFile("river1.ogg", river1Bytes);
         player.addFile("river2.ogg", river2Bytes);
         player.play();
+        document.getElementById("buttonStop").classList.remove("hidden");
       }
 
-      document
-        .getElementById("exampleSelect")
-        .addEventListener("change", async (e) => {
-          await setSbg(await fetch(e.target.value).then((r) => r.text()));
-        });
+      const exampleSelect = document.getElementById("exampleSelect");
+      const inputFile = document.getElementById("inputFile");
+      const buttonStop = document.getElementById("buttonStop");
 
-      document
-        .getElementById("inputFile")
-        .addEventListener("change", async (e) => {
-          const [file] = e.target.files;
-          const reader = new FileReader();
-          reader.onload = (r) => {
-            setSbg(r.target.result);
-          };
-          reader.readAsText(file);
-        });
+      exampleSelect.addEventListener("change", async (e) => {
+        await setSbg(await fetch(e.target.value).then((r) => r.text()));
+      });
+
+      inputFile.addEventListener("change", async (e) => {
+        const [file] = e.target.files;
+        const reader = new FileReader();
+        reader.onload = (r) => {
+          setSbg(r.target.result);
+        };
+        reader.readAsText(file);
+      });
+
+      buttonStop.addEventListener("click", async (e) => {
+        if (player) {
+          player.stop();
+        }
+      });
     </script>
   </body>
 </html>
