@@ -1,7 +1,25 @@
 {
-  "tyoe": "module",
+  "name": "sbagen",
+  "version": "0.0.0",
+  "description": "Binaural beats for brain-synchronization",
+  "exports": {
+    ".": {
+      "import": "./docs/sbagen.js"
+    }
+  },
   "scripts": {
-    "start": "node dev.js",
-    "build": "./build-wasm.sh"
-  }
+    "start": "npx -y live-server docs",
+    "build": "rm -rf build && cmake -B build && cmake --build build",
+    "wbuild": "rm -rf docs/wasm && emcmake cmake -B docs/wasm && cmake --build docs/wasm",
+    "prestart": "npm run wbuild"
+  },
+  "keywords": [],
+  "author": "David Konsumer (konsumer)",
+  "license": "GPL3",
+  "type": "module",
+  "files": [
+    "./docs/sbagen.js",
+    "./docs/wasm/sbagen.mjs",
+    "./docs/wasm/sbagen.wasm"
+  ]
 }

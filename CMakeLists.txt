@@ -1,190 +1,96 @@
-cmake_minimum_required(VERSION 3.15)
-project(sbagen C)
+cmake_minimum_required(VERSION 3.16)
+project(sbagen LANGUAGES C)
 
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_STANDARD_REQUIRED ON)
+# Always build sbagen.c
+set(SBAGEN_SOURCES src/sbagen.c)
 
-# Options
-option(BUILD_WASM "Build for WebAssembly" OFF)
-option(ENABLE_OGG "Enable OGG support" OFF)
-option(ENABLE_MP3 "Enable MP3 support" OFF)
+find_package(PkgConfig REQUIRED)
 
-# Main executable
-add_executable(sbagen src/sbagen.c)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew")
+endif()
 
-# Platform detection and configuration
-if(BUILD_WASM)
-    message(STATUS "Configuring for WebAssembly build")
+# Platform-specific setup
+if(EMSCRIPTEN)
+    # Emscripten build - SDL only, no OGG/MP3 (would need different implementation)
+    add_executable(sbagen ${SBAGEN_SOURCES})
 
-    # WASM-specific settings - use T_POSIX (no audio, we'll add SDL separately)
-    target_compile_definitions(sbagen PRIVATE
-        T_POSIX
+    target_compile_options(sbagen PRIVATE -sUSE_SDL=2)
+    set_target_properties(sbagen PROPERTIES
+        SUFFIX ".mjs"
+        LINK_FLAGS "-sUSE_SDL=2 -sEXPORTED_RUNTIME_METHODS=['FS','callMain'] -sEXPORTED_FUNCTIONS=['_main','_signal_handler'] -sALLOW_MEMORY_GROWTH=1 -sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=web,worker -sASYNCIFY=1 -sASYNCIFY_STACK_SIZE=524288 -sASYNCIFY_IMPORTS=['emscripten_sleep']"
     )
-
-    # Emscripten-specific flags
-    if(EMSCRIPTEN)
-        message(STATUS "Using Emscripten toolchain with ES6 modules and SDL2")
-
-        # Enable OGG support for WASM builds using Emscripten ports
-        if(ENABLE_OGG)
-            message(STATUS "Enabling OGG support via Emscripten ports (Tremor/Vorbisidec)")
-            target_compile_definitions(sbagen PRIVATE OGG_DECODE)
-
-            # Add Emscripten port flags for Tremor (no pthread needed)
-            target_compile_options(sbagen PRIVATE -sUSE_VORBIS=1 -sUSE_OGG=1)
-
-            # Use Emscripten's port system for Tremor
-            set_target_properties(sbagen PROPERTIES
-                LINK_FLAGS "-s WASM=1 \
-                            -s EXPORTED_FUNCTIONS='[\"_main\"]' \
-                            -s EXPORTED_RUNTIME_METHODS='[\"callMain\",\"FS\"]' \
-                            -s ALLOW_MEMORY_GROWTH=1 \
-                            -s MODULARIZE=1 \
-                            -s EXPORT_ES6=1 \
-                            -s EXPORT_NAME='createSBaGenModule' \
-                            -s ENVIRONMENT='web,worker' \
-                            -s FILESYSTEM=1 \
-                            -s EXIT_RUNTIME=0 \
-                            -s USE_VORBIS=1 \
-                            -s USE_OGG=1"
-            )
-        else()
-            # Export functions that will be callable from JavaScript
-            set_target_properties(sbagen PROPERTIES
-                LINK_FLAGS "-s WASM=1 \
-                            -s EXPORTED_FUNCTIONS='[\"_main\"]' \
-                            -s EXPORTED_RUNTIME_METHODS='[\"callMain\",\"FS\"]' \
-                            -s ALLOW_MEMORY_GROWTH=1 \
-                            -s MODULARIZE=1 \
-                            -s EXPORT_ES6=1 \
-                            -s EXPORT_NAME='createSBaGenModule' \
-                            -s ENVIRONMENT='web,worker' \
-                            -s FILESYSTEM=1 \
-                            -s EXIT_RUNTIME=0"
-            )
-        endif()
-
-        # Enable pthread if needed
-        # target_link_options(sbagen PRIVATE "-pthread")
-        # target_compile_options(sbagen PRIVATE "-pthread")
-
-        # Set output name and suffix for ES modules
-        set_target_properties(sbagen PROPERTIES
-            OUTPUT_NAME "sbagen"
-            SUFFIX ".mjs"
-        )
-    else()
-        message(STATUS "Using WASI SDK")
-        # WASI-specific settings
-        target_compile_definitions(sbagen PRIVATE
-            __wasi__
-        )
-    endif()
-
-elseif(UNIX AND NOT APPLE)
-    message(STATUS "Configuring for Linux")
-    # Only define T_LINUX, let the code define the rest
-    target_compile_definitions(sbagen PRIVATE
-        T_LINUX
-    )
-
-    # Link pthread for Linux
-    target_link_libraries(sbagen PRIVATE pthread m)
-
-elseif(APPLE)
-    message(STATUS "Configuring for macOS")
-
-    # Note: The original code uses deprecated Carbon.h which is not available
-    # on modern macOS. For now, we use POSIX mode with file output.
-    # Audio output to device would require updating the CoreAudio code.
-    message(WARNING "Using POSIX mode (file output only) due to deprecated Carbon API")
-    message(WARNING "For audio device output, the CoreAudio code needs modernization")
-
-    # Only define T_POSIX, let the code define the rest
-    target_compile_definitions(sbagen PRIVATE
-        T_POSIX
-    )
-
-    target_link_libraries(sbagen PRIVATE pthread m)
-
-elseif(WIN32)
-    message(STATUS "Configuring for Windows")
-
-    # Only define T_MINGW or T_MSVC, let the code define the rest
-    if(MINGW)
-        target_compile_definitions(sbagen PRIVATE
-            T_MINGW
-        )
-    elseif(MSVC)
-        target_compile_definitions(sbagen PRIVATE
-            T_MSVC
-        )
-    endif()
-
-    # Link Windows multimedia library
-    target_link_libraries(sbagen PRIVATE winmm)
-
+    message(STATUS "Building for Emscripten with SDL2")
 else()
-    message(WARNING "Unknown platform, using POSIX defaults with no audio")
-    # Only define T_POSIX, let the code define the rest
-    target_compile_definitions(sbagen PRIVATE
-        T_POSIX
-    )
-    target_link_libraries(sbagen PRIVATE pthread m)
-endif()
+    # Native build - try to include OGG and MP3 support
 
-# OGG support
-if(ENABLE_OGG)
-    message(STATUS "OGG support enabled")
-
-    # Try to find system libogg and libvorbis
-    find_package(PkgConfig)
-    if(PKG_CONFIG_FOUND)
-        pkg_check_modules(OGG ogg)
-        pkg_check_modules(VORBIS vorbis vorbisfile)
+    # Check for OGG support
+    pkg_check_modules(VORBISIDEC vorbisidec)
+    if(VORBISIDEC_FOUND)
+        list(APPEND SBAGEN_SOURCES src/oggdec.c)
+        set(HAVE_OGG TRUE)
+        set(OGG_IMPL "Tremor")
+    else()
+        pkg_check_modules(VORBISFILE vorbisfile)
+        if(VORBISFILE_FOUND)
+            list(APPEND SBAGEN_SOURCES src/oggdec.c)
+            set(HAVE_OGG TRUE)
+            set(OGG_IMPL "libvorbisfile")
+        endif()
     endif()
 
-    if(OGG_FOUND AND VORBIS_FOUND)
-        message(STATUS "Using system OGG/Vorbis libraries")
+    # Check for MP3 support
+    pkg_check_modules(MAD mad)
+    if(MAD_FOUND)
+        list(APPEND SBAGEN_SOURCES src/mp3dec.c)
+        set(HAVE_MP3 TRUE)
+    endif()
+
+    add_executable(sbagen ${SBAGEN_SOURCES})
+
+    # SDL2 is required
+    find_package(SDL2 REQUIRED CONFIG)
+    target_link_libraries(sbagen PRIVATE SDL2::SDL2)
+
+    # Link OGG libraries if available
+    if(HAVE_OGG)
         target_compile_definitions(sbagen PRIVATE OGG_DECODE)
-        target_include_directories(sbagen PRIVATE ${OGG_INCLUDE_DIRS} ${VORBIS_INCLUDE_DIRS})
-        target_link_libraries(sbagen PRIVATE ${OGG_LIBRARIES} ${VORBIS_LIBRARIES})
-    else()
-        message(WARNING "OGG/Vorbis not found. Please install libogg-dev and libvorbis-dev")
-        message(WARNING "Or the code needs oggdec.c implementation")
-    endif()
-endif()
-
-# MP3 support
-if(ENABLE_MP3)
-    message(STATUS "MP3 support enabled")
-
-    # Try to find system libmpg123 or similar
-    find_package(PkgConfig)
-    if(PKG_CONFIG_FOUND)
-        pkg_check_modules(MPG123 libmpg123)
+        if(VORBISIDEC_FOUND)
+            target_compile_definitions(sbagen PRIVATE HAVE_TREMOR)
+            target_include_directories(sbagen PRIVATE ${VORBISIDEC_INCLUDE_DIRS})
+            target_link_directories(sbagen PRIVATE ${VORBISIDEC_LIBRARY_DIRS})
+            target_link_libraries(sbagen PRIVATE ${VORBISIDEC_LIBRARIES})
+        else()
+            target_include_directories(sbagen PRIVATE ${VORBISFILE_INCLUDE_DIRS})
+            target_link_directories(sbagen PRIVATE ${VORBISFILE_LIBRARY_DIRS})
+            target_link_libraries(sbagen PRIVATE ${VORBISFILE_LIBRARIES})
+        endif()
     endif()
 
-    if(MPG123_FOUND)
-        message(STATUS "Using system MPG123 library")
+    # Link MP3 libraries if available
+    if(HAVE_MP3)
         target_compile_definitions(sbagen PRIVATE MP3_DECODE)
-        target_include_directories(sbagen PRIVATE ${MPG123_INCLUDE_DIRS})
-        target_link_libraries(sbagen PRIVATE ${MPG123_LIBRARIES})
-    else()
-        message(WARNING "MPG123 not found. Please install libmpg123-dev")
-        message(WARNING "Or the code needs mp3dec.c implementation")
+        target_include_directories(sbagen PRIVATE ${MAD_INCLUDE_DIRS})
+        target_link_directories(sbagen PRIVATE ${MAD_LIBRARY_DIRS})
+        target_link_libraries(sbagen PRIVATE ${MAD_LIBRARIES})
     endif()
+
+    # Status message
+    set(FORMAT_SUPPORT "SDL2")
+    if(HAVE_OGG)
+        set(FORMAT_SUPPORT "${FORMAT_SUPPORT}, OGG (${OGG_IMPL})")
+    endif()
+    if(HAVE_MP3)
+        set(FORMAT_SUPPORT "${FORMAT_SUPPORT}, MP3 (libmad)")
+    endif()
+    message(STATUS "Building with ${FORMAT_SUPPORT}")
 endif()
 
-# Install target
-install(TARGETS sbagen DESTINATION bin)
-
-# Print configuration summary
-message(STATUS "")
-message(STATUS "=== Configuration Summary ===")
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-message(STATUS "WASM build: ${BUILD_WASM}")
-message(STATUS "OGG support: ${ENABLE_OGG}")
-message(STATUS "MP3 support: ${ENABLE_MP3}")
-message(STATUS "=============================")
-message(STATUS "")
+# Platform defines
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_compile_definitions(sbagen PRIVATE T_LINUX)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    target_compile_definitions(sbagen PRIVATE T_MACOSX)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_compile_definitions(sbagen PRIVATE T_MSVC)
+endif()

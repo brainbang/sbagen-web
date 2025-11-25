@@ -3,524 +3,335 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SBaGen WebAssembly</title>
+    <title>SBagen Player</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
     />
-    <style>
-      sbagen-player {
-        margin: 1rem 0;
-      }
-      #output {
-        max-height: 300px;
-        overflow-y: auto;
-      }
-    </style>
   </head>
   <body>
-    <main class="container">
+    <main class="container-fluid">
       <h1>
-        <a href="https://github.com/brainbang/sbagen-web">SBaGen WebAssembly</a>
+        <a href="https://github.com/brainbang/sbagen-web">SBagen Player</a>
       </h1>
-      <p>Binaural beat generator compiled to WebAssembly with OGG support.</p>
-      <p>Listen on headphones!</p>
-
-      <article id="status">
-        <p>Initializing...</p>
-      </article>
-
-      <article>
-        <p>Select a pre-loaded example or upload your own .sbg file:</p>
-
-        <label>
-          Choose an example:
-          <select id="exampleSelect" disabled>
-            <option value="">-- Select an example --</option>
-            <optgroup label="Basics">
-              <option value="examples/basics/prog-chakras-1.sbg">
-                Chakras 1
-              </option>
-              <option value="examples/basics/prog-drop-00d.sbg">
-                Drop 00d (with OGG)
-              </option>
-              <option value="examples/basics/prog-drop-old-demo.sbg">
-                Drop Old Demo (with OGG)
-              </option>
-              <option value="examples/basics/prog-slide-alpha-10.sbg">
-                Slide Alpha 10 (with OGG)
-              </option>
-              <option value="examples/basics/prog-slide-beta-16.sbg">
-                Slide Beta 16 (with OGG)
-              </option>
-              <option value="examples/basics/prog-spin-1.sbg">Spin 1</option>
-              <option value="examples/basics/ts-brain-alpha.sbg">
-                Brain Alpha
-              </option>
-              <option value="examples/basics/ts-brain-beta.sbg">
-                Brain Beta
-              </option>
-              <option value="examples/basics/ts-brain-delta.sbg">
-                Brain Delta
-              </option>
-              <option value="examples/basics/ts-brain-theta.sbg">
-                Brain Theta
-              </option>
-            </optgroup>
-            <optgroup label="Focus">
-              <option value="examples/focus/focus-03-a.sbg">Focus 03-A</option>
-              <option value="examples/focus/focus-03-b.sbg">Focus 03-B</option>
-              <option value="examples/focus/focus-10-a.sbg">Focus 10-A</option>
-              <option value="examples/focus/focus-10-b.sbg">Focus 10-B</option>
-              <option value="examples/focus/focus-12-a.sbg">Focus 12-A</option>
-              <option value="examples/focus/focus-12-b.sbg">Focus 12-B</option>
-              <option value="examples/focus/focus-15-a.sbg">Focus 15-A</option>
-              <option value="examples/focus/focus-15-b.sbg">Focus 15-B</option>
-              <option value="examples/focus/focus-21-a.sbg">Focus 21-A</option>
-              <option value="examples/focus/focus-21-b.sbg">Focus 21-B</option>
-              <option value="examples/focus/focus-21-c.sbg">Focus 21-C</option>
-              <option value="examples/focus/focus-22-b.sbg">Focus 22-B</option>
-              <option value="examples/focus/focus-23-a.sbg">Focus 23-A</option>
-              <option value="examples/focus/focus-23-b.sbg">Focus 23-B</option>
-              <option value="examples/focus/focus-24-a.sbg">Focus 24-A</option>
-              <option value="examples/focus/focus-24-b.sbg">Focus 24-B</option>
-              <option value="examples/focus/focus-25-a.sbg">Focus 25-A</option>
-              <option value="examples/focus/focus-26-a.sbg">Focus 26-A</option>
-              <option value="examples/focus/focus-26-b.sbg">Focus 26-B</option>
-              <option value="examples/focus/focus-27-b.sbg">Focus 27-B</option>
-              <option value="examples/focus/ts1-catnapper.sbg">
-                Catnapper
-              </option>
-              <option value="examples/focus/ts1-concentration.sbg">
-                Concentration
-              </option>
-              <option value="examples/focus/ts1-focus03.sbg">
-                TS1 Focus 03
-              </option>
-              <option value="examples/focus/ts1-focus10.sbg">
-                TS1 Focus 10
-              </option>
-              <option value="examples/focus/ts1-focus12.sbg">
-                TS1 Focus 12
-              </option>
-              <option value="examples/focus/ts1-focus15.sbg">
-                TS1 Focus 15
-              </option>
-              <option value="examples/focus/ts1-focus21.sbg">
-                TS1 Focus 21
-              </option>
-              <option value="examples/focus/ts1-homing.sbg">Homing</option>
-              <option value="examples/focus/ts1-intro.sbg">Intro</option>
-              <option value="examples/focus/wave-01.sbg">Wave 01</option>
-              <option value="examples/focus/wave-02.sbg">Wave 02</option>
-              <option value="examples/focus/wave-03.sbg">Wave 03</option>
-              <option value="examples/focus/wave-04.sbg">Wave 04</option>
-              <option value="examples/focus/wave-05.sbg">Wave 05</option>
-              <option value="examples/focus/wave-06.sbg">Wave 06</option>
-              <option value="examples/focus/wave-07.sbg">Wave 07</option>
-              <option value="examples/focus/wave-08.sbg">Wave 08</option>
-            </optgroup>
-            <optgroup label="Contrib">
-              <option value="examples/contrib/ch-aspirin.sbg">Aspirin</option>
-              <option value="examples/contrib/ch-awakened-mind.sbg">
-                Awakened Mind
-              </option>
-              <option value="examples/contrib/ch-einstein.sbg">Einstein</option>
-              <option value="examples/contrib/ch-inspiration.sbg">
-                Inspiration
-              </option>
-              <option value="examples/contrib/ch-obe.sbg">OBE</option>
-              <option value="examples/contrib/ch-runners-high.sbg">
-                Runners High
-              </option>
-              <option value="examples/contrib/ch-running-high.sbg">
-                Running High
-              </option>
-              <option value="examples/contrib/ch-schumann-cycle.sbg">
-                Schumann Cycle
-              </option>
-              <option value="examples/contrib/ch-sonic-caffeine.sbg">
-                Sonic Caffeine
-              </option>
-              <option value="examples/contrib/cjm-tempus-fugit.sbg">
-                Tempus Fugit
-              </option>
-              <option value="examples/contrib/cy-eye-refresher.sbg">
-                Eye Refresher
-              </option>
-              <option value="examples/contrib/cy-prana-energiser.sbg">
-                Prana Energiser
-              </option>
-              <option value="examples/contrib/kh-lost-storm.sbg">
-                Lost Storm
-              </option>
-              <option value="examples/contrib/ng-1.sbg">NG-1</option>
-              <option value="examples/contrib/rusty-1.sbg">Rusty-1</option>
-              <option value="examples/contrib/xota-powermed1-pink.sbg">
-                Powermed1 Pink
-              </option>
-              <option value="examples/contrib/zeljko.sbg">Zeljko</option>
-            </optgroup>
-            <optgroup label="Contrib - Jim">
-              <option value="examples/contrib/jim/prog-010221.sbg">
-                010221
-              </option>
-              <option value="examples/contrib/jim/prog-010301.sbg">
-                010301
-              </option>
-              <option value="examples/contrib/jim/prog-990102.sbg">
-                990102
-              </option>
-              <option value="examples/contrib/jim/prog-990103.sbg">
-                990103
-              </option>
-              <option value="examples/contrib/jim/prog-990104.sbg">
-                990104
-              </option>
-              <option value="examples/contrib/jim/prog-990105.sbg">
-                990105
-              </option>
-              <option value="examples/contrib/jim/prog-990106.sbg">
-                990106
-              </option>
-              <option value="examples/contrib/jim/prog-990107.sbg">
-                990107
-              </option>
-              <option value="examples/contrib/jim/prog-990108.sbg">
-                990108
-              </option>
-              <option value="examples/contrib/jim/prog-990111.sbg">
-                990111
-              </option>
-              <option value="examples/contrib/jim/prog-990112.sbg">
-                990112
-              </option>
-              <option value="examples/contrib/jim/prog-990118.sbg">
-                990118
-              </option>
-              <option value="examples/contrib/jim/prog-990209.sbg">
-                990209
-              </option>
-              <option value="examples/contrib/jim/prog-NSDWS-example.sbg">
-                NSDWS Example
-              </option>
-              <option value="examples/contrib/jim/prog-scan-1.sbg">
-                Scan 1
-              </option>
-              <option value="examples/contrib/jim/prog-tape-1-hp.sbg">
-                Tape 1 HP
-              </option>
-              <option value="examples/contrib/jim/prog-tape-1.sbg">
-                Tape 1
-              </option>
-              <option value="examples/contrib/jim/prog-tape-2.sbg">
-                Tape 2
-              </option>
-              <option value="examples/contrib/jim/prog-tape-3.sbg">
-                Tape 3
-              </option>
-              <option value="examples/contrib/jim/prog-test-wave.sbg">
-                Test Wave
-              </option>
-              <option value="examples/contrib/jim/ts-calm.sbg">Calm</option>
-              <option value="examples/contrib/jim/ts-calm2.sbg">Calm 2</option>
-              <option value="examples/contrib/jim/ts-mix1.sbg">Mix 1</option>
-              <option value="examples/contrib/jim/ts-purring-cat.sbg">
-                Purring Cat
-              </option>
-              <option value="examples/contrib/jim/ts-recharge.sbg">
-                Recharge
-              </option>
-              <option value="examples/contrib/jim/ts-test10.sbg">
-                Test 10
-              </option>
-              <option value="examples/contrib/jim/ts-test10b.sbg">
-                Test 10B
-              </option>
-              <option value="examples/contrib/jim/ts-test10c.sbg">
-                Test 10C
-              </option>
-              <option value="examples/contrib/jim/ts-truth-other.sbg">
-                Truth Other
-              </option>
-            </optgroup>
-            <optgroup label="Contrib - Ghostlab">
-              <option value="examples/contrib/ghostlab/bells-1.sbg">
-                Bells 1
-              </option>
-              <option value="examples/contrib/ghostlab/bells-2.sbg">
-                Bells 2
-              </option>
-              <option value="examples/contrib/ghostlab/bells-3.sbg">
-                Bells 3
-              </option>
-              <option value="examples/contrib/ghostlab/drop-001.sbg">
-                Drop 001
-              </option>
-              <option value="examples/contrib/ghostlab/drop-002.sbg">
-                Drop 002
-              </option>
-              <option value="examples/contrib/ghostlab/drop-007.sbg">
-                Drop 007
-              </option>
-              <option value="examples/contrib/ghostlab/drop-008.sbg">
-                Drop 008
-              </option>
-              <option value="examples/contrib/ghostlab/drop-009.sbg">
-                Drop 009
-              </option>
-              <option value="examples/contrib/ghostlab/drop-010.sbg">
-                Drop 010
-              </option>
-              <option value="examples/contrib/ghostlab/drop-011.sbg">
-                Drop 011
-              </option>
-              <option value="examples/contrib/ghostlab/drop-012.sbg">
-                Drop 012
-              </option>
-              <option value="examples/contrib/ghostlab/drop-013.sbg">
-                Drop 013
-              </option>
-              <option value="examples/contrib/ghostlab/drop-014.sbg">
-                Drop 014
-              </option>
-              <option value="examples/contrib/ghostlab/mod-003.sbg">
-                Mod 003
-              </option>
-              <option value="examples/contrib/ghostlab/mod-004.sbg">
-                Mod 004
-              </option>
-              <option value="examples/contrib/ghostlab/mod-005.sbg">
-                Mod 005
-              </option>
-              <option value="examples/contrib/ghostlab/mod-006.sbg">
-                Mod 006
-              </option>
-              <option value="examples/contrib/ghostlab/mod-12-0.sbg">
-                Mod 12-0
-              </option>
-              <option value="examples/contrib/ghostlab/mod-7-83.sbg">
-                Mod 7-83
-              </option>
-              <option value="examples/contrib/ghostlab/modulations-1.sbg">
-                Modulations 1
-              </option>
-              <option value="examples/contrib/ghostlab/modulations-2.sbg">
-                Modulations 2
-              </option>
-              <option value="examples/contrib/ghostlab/modulations-3.sbg">
-                Modulations 3
-              </option>
-              <option value="examples/contrib/ghostlab/modulations-4.sbg">
-                Modulations 4
-              </option>
-              <option value="examples/contrib/ghostlab/modulations-5.sbg">
-                Modulations 5
-              </option>
-              <option value="examples/contrib/ghostlab/modulations-6.sbg">
-                Modulations 6
-              </option>
-              <option value="examples/contrib/ghostlab/modulations-7.sbg">
-                Modulations 7
-              </option>
-              <option value="examples/contrib/ghostlab/planets.sbg">
-                Planets
-              </option>
-              <option value="examples/contrib/ghostlab/pulse-1.sbg">
-                Pulse 1
-              </option>
-              <option value="examples/contrib/ghostlab/pulse-2.sbg">
-                Pulse 2
-              </option>
-              <option value="examples/contrib/ghostlab/pulse-3.sbg">
-                Pulse 3
-              </option>
-              <option value="examples/contrib/ghostlab/pulse-4.sbg">
-                Pulse 4
-              </option>
-              <option value="examples/contrib/ghostlab/pulse-5.sbg">
-                Pulse 5
-              </option>
-              <option value="examples/contrib/ghostlab/pulse-6.sbg">
-                Pulse 6
-              </option>
-              <option value="examples/contrib/ghostlab/pulse-7.sbg">
-                Pulse 7
-              </option>
-              <option value="examples/contrib/ghostlab/shaman-dance.sbg">
-                Shaman Dance
-              </option>
-              <option value="examples/contrib/ghostlab/shaman-epileptic.sbg">
-                Shaman Epileptic
-              </option>
-              <option value="examples/contrib/ghostlab/shaman.sbg">
-                Shaman
-              </option>
-            </optgroup>
-          </select>
-        </label>
-        <p>
-          <small>Or load your own:</small>
-        </p>
-        <label>
-          <input type="file" id="fileInput" accept=".sbg,.txt" disabled />
-        </label>
-
-        <div id="playControls" style="display: none; margin-top: 1rem">
-          <button id="playBtn">▶ Play</button>
-          <button id="stopBtn" style="display: none">⏹ Stop</button>
-          <span
-            id="timeDisplay"
-            style="margin-left: 10px; font-variant-numeric: tabular-nums"
-            >0:00</span
-          >
-        </div>
-      </article>
-
-      <article>
-        <details>
-          <summary>Sequence Information</summary>
-          <div id="info"></div>
-        </details>
-        <details>
-          <summary>Sequence File Content</summary>
-          <pre id="output" style="white-space: pre-wrap"></pre>
-        </details>
-      </article>
-
-      <footer>
-        <small>
-          <a href="https://uazu.net/sbagen/">SBaGen</a> (Sequenced Binaural Beat
-          Generator) compiled to WebAssembly.
-          <a href="demo.html">View API Demo</a> |
-          <a href="https://github.com/brainbang/sbagen_idoser" target="_blank"
-            >Get more sequences</a
-          >
-        </small>
-      </footer>
+      <p>You can choose your own SBG file, or choose from our examples.</p>
+      <input type="file" id="inputFile" />
+      <label>
+        Choose an example:
+        <select id="exampleSelect">
+          <option value="">-- Select an example --</option>
+          <optgroup label="Basics">
+            <option value="examples/basics/prog-chakras-1.sbg">
+              Chakras 1
+            </option>
+            <option value="examples/basics/prog-drop-00d.sbg">
+              Drop 00d (with OGG)
+            </option>
+            <option value="examples/basics/prog-drop-old-demo.sbg">
+              Drop Old Demo (with OGG)
+            </option>
+            <option value="examples/basics/prog-slide-alpha-10.sbg">
+              Slide Alpha 10 (with OGG)
+            </option>
+            <option value="examples/basics/prog-slide-beta-16.sbg">
+              Slide Beta 16 (with OGG)
+            </option>
+            <option value="examples/basics/prog-spin-1.sbg">Spin 1</option>
+            <option value="examples/basics/ts-brain-alpha.sbg">
+              Brain Alpha
+            </option>
+            <option value="examples/basics/ts-brain-beta.sbg">
+              Brain Beta
+            </option>
+            <option value="examples/basics/ts-brain-delta.sbg">
+              Brain Delta
+            </option>
+            <option value="examples/basics/ts-brain-theta.sbg">
+              Brain Theta
+            </option>
+          </optgroup>
+          <optgroup label="Focus">
+            <option value="examples/focus/focus-03-a.sbg">Focus 03-A</option>
+            <option value="examples/focus/focus-03-b.sbg">Focus 03-B</option>
+            <option value="examples/focus/focus-10-a.sbg">Focus 10-A</option>
+            <option value="examples/focus/focus-10-b.sbg">Focus 10-B</option>
+            <option value="examples/focus/focus-12-a.sbg">Focus 12-A</option>
+            <option value="examples/focus/focus-12-b.sbg">Focus 12-B</option>
+            <option value="examples/focus/focus-15-a.sbg">Focus 15-A</option>
+            <option value="examples/focus/focus-15-b.sbg">Focus 15-B</option>
+            <option value="examples/focus/focus-21-a.sbg">Focus 21-A</option>
+            <option value="examples/focus/focus-21-b.sbg">Focus 21-B</option>
+            <option value="examples/focus/focus-21-c.sbg">Focus 21-C</option>
+            <option value="examples/focus/focus-22-b.sbg">Focus 22-B</option>
+            <option value="examples/focus/focus-23-a.sbg">Focus 23-A</option>
+            <option value="examples/focus/focus-23-b.sbg">Focus 23-B</option>
+            <option value="examples/focus/focus-24-a.sbg">Focus 24-A</option>
+            <option value="examples/focus/focus-24-b.sbg">Focus 24-B</option>
+            <option value="examples/focus/focus-25-a.sbg">Focus 25-A</option>
+            <option value="examples/focus/focus-26-a.sbg">Focus 26-A</option>
+            <option value="examples/focus/focus-26-b.sbg">Focus 26-B</option>
+            <option value="examples/focus/focus-27-b.sbg">Focus 27-B</option>
+            <option value="examples/focus/ts1-catnapper.sbg">Catnapper</option>
+            <option value="examples/focus/ts1-concentration.sbg">
+              Concentration
+            </option>
+            <option value="examples/focus/ts1-focus03.sbg">TS1 Focus 03</option>
+            <option value="examples/focus/ts1-focus10.sbg">TS1 Focus 10</option>
+            <option value="examples/focus/ts1-focus12.sbg">TS1 Focus 12</option>
+            <option value="examples/focus/ts1-focus15.sbg">TS1 Focus 15</option>
+            <option value="examples/focus/ts1-focus21.sbg">TS1 Focus 21</option>
+            <option value="examples/focus/ts1-homing.sbg">Homing</option>
+            <option value="examples/focus/ts1-intro.sbg">Intro</option>
+            <option value="examples/focus/wave-01.sbg">Wave 01</option>
+            <option value="examples/focus/wave-02.sbg">Wave 02</option>
+            <option value="examples/focus/wave-03.sbg">Wave 03</option>
+            <option value="examples/focus/wave-04.sbg">Wave 04</option>
+            <option value="examples/focus/wave-05.sbg">Wave 05</option>
+            <option value="examples/focus/wave-06.sbg">Wave 06</option>
+            <option value="examples/focus/wave-07.sbg">Wave 07</option>
+            <option value="examples/focus/wave-08.sbg">Wave 08</option>
+          </optgroup>
+          <optgroup label="Contrib">
+            <option value="examples/contrib/ch-aspirin.sbg">Aspirin</option>
+            <option value="examples/contrib/ch-awakened-mind.sbg">
+              Awakened Mind
+            </option>
+            <option value="examples/contrib/ch-einstein.sbg">Einstein</option>
+            <option value="examples/contrib/ch-inspiration.sbg">
+              Inspiration
+            </option>
+            <option value="examples/contrib/ch-obe.sbg">OBE</option>
+            <option value="examples/contrib/ch-runners-high.sbg">
+              Runners High
+            </option>
+            <option value="examples/contrib/ch-running-high.sbg">
+              Running High
+            </option>
+            <option value="examples/contrib/ch-schumann-cycle.sbg">
+              Schumann Cycle
+            </option>
+            <option value="examples/contrib/ch-sonic-caffeine.sbg">
+              Sonic Caffeine
+            </option>
+            <option value="examples/contrib/cjm-tempus-fugit.sbg">
+              Tempus Fugit
+            </option>
+            <option value="examples/contrib/cy-eye-refresher.sbg">
+              Eye Refresher
+            </option>
+            <option value="examples/contrib/cy-prana-energiser.sbg">
+              Prana Energiser
+            </option>
+            <option value="examples/contrib/kh-lost-storm.sbg">
+              Lost Storm
+            </option>
+            <option value="examples/contrib/ng-1.sbg">NG-1</option>
+            <option value="examples/contrib/rusty-1.sbg">Rusty-1</option>
+            <option value="examples/contrib/xota-powermed1-pink.sbg">
+              Powermed1 Pink
+            </option>
+            <option value="examples/contrib/zeljko.sbg">Zeljko</option>
+          </optgroup>
+          <optgroup label="Contrib - Jim">
+            <option value="examples/contrib/jim/prog-010221.sbg">010221</option>
+            <option value="examples/contrib/jim/prog-010301.sbg">010301</option>
+            <option value="examples/contrib/jim/prog-990102.sbg">990102</option>
+            <option value="examples/contrib/jim/prog-990103.sbg">990103</option>
+            <option value="examples/contrib/jim/prog-990104.sbg">990104</option>
+            <option value="examples/contrib/jim/prog-990105.sbg">990105</option>
+            <option value="examples/contrib/jim/prog-990106.sbg">990106</option>
+            <option value="examples/contrib/jim/prog-990107.sbg">990107</option>
+            <option value="examples/contrib/jim/prog-990108.sbg">990108</option>
+            <option value="examples/contrib/jim/prog-990111.sbg">990111</option>
+            <option value="examples/contrib/jim/prog-990112.sbg">990112</option>
+            <option value="examples/contrib/jim/prog-990118.sbg">990118</option>
+            <option value="examples/contrib/jim/prog-990209.sbg">990209</option>
+            <option value="examples/contrib/jim/prog-NSDWS-example.sbg">
+              NSDWS Example
+            </option>
+            <option value="examples/contrib/jim/prog-scan-1.sbg">Scan 1</option>
+            <option value="examples/contrib/jim/prog-tape-1-hp.sbg">
+              Tape 1 HP
+            </option>
+            <option value="examples/contrib/jim/prog-tape-1.sbg">Tape 1</option>
+            <option value="examples/contrib/jim/prog-tape-2.sbg">Tape 2</option>
+            <option value="examples/contrib/jim/prog-tape-3.sbg">Tape 3</option>
+            <option value="examples/contrib/jim/prog-test-wave.sbg">
+              Test Wave
+            </option>
+            <option value="examples/contrib/jim/ts-calm.sbg">Calm</option>
+            <option value="examples/contrib/jim/ts-calm2.sbg">Calm 2</option>
+            <option value="examples/contrib/jim/ts-mix1.sbg">Mix 1</option>
+            <option value="examples/contrib/jim/ts-purring-cat.sbg">
+              Purring Cat
+            </option>
+            <option value="examples/contrib/jim/ts-recharge.sbg">
+              Recharge
+            </option>
+            <option value="examples/contrib/jim/ts-test10.sbg">Test 10</option>
+            <option value="examples/contrib/jim/ts-test10b.sbg">
+              Test 10B
+            </option>
+            <option value="examples/contrib/jim/ts-test10c.sbg">
+              Test 10C
+            </option>
+            <option value="examples/contrib/jim/ts-truth-other.sbg">
+              Truth Other
+            </option>
+          </optgroup>
+          <optgroup label="Contrib - Ghostlab">
+            <option value="examples/contrib/ghostlab/bells-1.sbg">
+              Bells 1
+            </option>
+            <option value="examples/contrib/ghostlab/bells-2.sbg">
+              Bells 2
+            </option>
+            <option value="examples/contrib/ghostlab/bells-3.sbg">
+              Bells 3
+            </option>
+            <option value="examples/contrib/ghostlab/drop-001.sbg">
+              Drop 001
+            </option>
+            <option value="examples/contrib/ghostlab/drop-002.sbg">
+              Drop 002
+            </option>
+            <option value="examples/contrib/ghostlab/drop-007.sbg">
+              Drop 007
+            </option>
+            <option value="examples/contrib/ghostlab/drop-008.sbg">
+              Drop 008
+            </option>
+            <option value="examples/contrib/ghostlab/drop-009.sbg">
+              Drop 009
+            </option>
+            <option value="examples/contrib/ghostlab/drop-010.sbg">
+              Drop 010
+            </option>
+            <option value="examples/contrib/ghostlab/drop-011.sbg">
+              Drop 011
+            </option>
+            <option value="examples/contrib/ghostlab/drop-012.sbg">
+              Drop 012
+            </option>
+            <option value="examples/contrib/ghostlab/drop-013.sbg">
+              Drop 013
+            </option>
+            <option value="examples/contrib/ghostlab/drop-014.sbg">
+              Drop 014
+            </option>
+            <option value="examples/contrib/ghostlab/mod-003.sbg">
+              Mod 003
+            </option>
+            <option value="examples/contrib/ghostlab/mod-004.sbg">
+              Mod 004
+            </option>
+            <option value="examples/contrib/ghostlab/mod-005.sbg">
+              Mod 005
+            </option>
+            <option value="examples/contrib/ghostlab/mod-006.sbg">
+              Mod 006
+            </option>
+            <option value="examples/contrib/ghostlab/mod-12-0.sbg">
+              Mod 12-0
+            </option>
+            <option value="examples/contrib/ghostlab/mod-7-83.sbg">
+              Mod 7-83
+            </option>
+            <option value="examples/contrib/ghostlab/modulations-1.sbg">
+              Modulations 1
+            </option>
+            <option value="examples/contrib/ghostlab/modulations-2.sbg">
+              Modulations 2
+            </option>
+            <option value="examples/contrib/ghostlab/modulations-3.sbg">
+              Modulations 3
+            </option>
+            <option value="examples/contrib/ghostlab/modulations-4.sbg">
+              Modulations 4
+            </option>
+            <option value="examples/contrib/ghostlab/modulations-5.sbg">
+              Modulations 5
+            </option>
+            <option value="examples/contrib/ghostlab/modulations-6.sbg">
+              Modulations 6
+            </option>
+            <option value="examples/contrib/ghostlab/modulations-7.sbg">
+              Modulations 7
+            </option>
+            <option value="examples/contrib/ghostlab/planets.sbg">
+              Planets
+            </option>
+            <option value="examples/contrib/ghostlab/pulse-1.sbg">
+              Pulse 1
+            </option>
+            <option value="examples/contrib/ghostlab/pulse-2.sbg">
+              Pulse 2
+            </option>
+            <option value="examples/contrib/ghostlab/pulse-3.sbg">
+              Pulse 3
+            </option>
+            <option value="examples/contrib/ghostlab/pulse-4.sbg">
+              Pulse 4
+            </option>
+            <option value="examples/contrib/ghostlab/pulse-5.sbg">
+              Pulse 5
+            </option>
+            <option value="examples/contrib/ghostlab/pulse-6.sbg">
+              Pulse 6
+            </option>
+            <option value="examples/contrib/ghostlab/pulse-7.sbg">
+              Pulse 7
+            </option>
+            <option value="examples/contrib/ghostlab/shaman-dance.sbg">
+              Shaman Dance
+            </option>
+            <option value="examples/contrib/ghostlab/shaman-epileptic.sbg">
+              Shaman Epileptic
+            </option>
+            <option value="examples/contrib/ghostlab/shaman.sbg">Shaman</option>
+          </optgroup>
+        </select>
+      </label>
     </main>
 
     <script type="module">
-      import SBaGen from "./sbagen-web.js";
+      import sbagen from "./sbagen.js";
 
-      const statusEl = document.getElementById("status");
-      const exampleSelect = document.getElementById("exampleSelect");
-      const fileInput = document.getElementById("fileInput");
-      const playControls = document.getElementById("playControls");
-      const playBtn = document.getElementById("playBtn");
-      const stopBtn = document.getElementById("stopBtn");
-      const timeDisplay = document.getElementById("timeDisplay");
-      const infoDiv = document.getElementById("info");
-      const outputEl = document.getElementById("output");
+      let player;
 
-      let sbagen = null;
+      const river1Bytes = new Uint8Array(
+        await fetch("examples/river1.ogg").then((r) => r.arrayBuffer()),
+      );
+      const river2Bytes = new Uint8Array(
+        await fetch("examples/river2.ogg").then((r) => r.arrayBuffer()),
+      );
 
-      // Initialize
-      (async () => {
-        try {
-          statusEl.innerHTML =
-            "<p>Initializing SBaGen WebAssembly module...</p>";
-          sbagen = await SBaGen.create();
-
-          statusEl.innerHTML =
-            "<p>✓ Ready - choose an example or load your own file</p>";
-          exampleSelect.disabled = false;
-          fileInput.disabled = false;
-
-          // Set up event listeners
-          sbagen.on("play", () => {
-            playBtn.style.display = "none";
-            stopBtn.style.display = "inline-block";
-            statusEl.innerHTML = "<p>▶ Playing...</p>";
-          });
-
-          sbagen.on("stop", () => {
-            playBtn.style.display = "inline-block";
-            stopBtn.style.display = "none";
-            timeDisplay.textContent = "0:00";
-            statusEl.innerHTML = "<p>⏹ Stopped</p>";
-          });
-
-          sbagen.on("pause", () => {
-            playBtn.style.display = "inline-block";
-            stopBtn.style.display = "none";
-            statusEl.innerHTML = "<p>⏸ Paused</p>";
-          });
-
-          sbagen.on("timeupdate", (time) => {
-            const minutes = Math.floor(time / 60);
-            const seconds = Math.floor(time % 60);
-            timeDisplay.textContent = `${minutes}:${String(seconds).padStart(2, "0")}`;
-          });
-
-          sbagen.on("generating", () => {
-            statusEl.innerHTML = '<p aria-busy="true">Generating audio...</p>';
-          });
-        } catch (error) {
-          statusEl.innerHTML = `<mark>Error: ${error.message}</mark>`;
+      async function setSbg(source) {
+        if (player) {
+          player.stop();
         }
-      })();
-
-      // Load sequence
-      async function loadSequence(source, filename) {
-        try {
-          statusEl.innerHTML = '<p aria-busy="true">Loading...</p>';
-
-          const info = await sbagen.load(source);
-
-          statusEl.innerHTML = "<p>✓ Loaded - ready to play</p>";
-          playControls.style.display = "block";
-
-          // Show info
-          const duration = info.estimatedDuration;
-          const minutes = Math.floor(duration / 60);
-          const seconds = duration % 60;
-
-          infoDiv.innerHTML = `
-            <p><strong>File:</strong> ${info.filename}</p>
-            <p><strong>Estimated Duration:</strong> ${minutes}:${String(seconds).padStart(2, "0")}</p>
-            ${info.description ? `<p><strong>Description:</strong></p><pre style="white-space: pre-wrap;">${info.description}</pre>` : ""}
-          `;
-
-          outputEl.textContent = info.content;
-        } catch (error) {
-          console.error("Load error:", error);
-          statusEl.innerHTML = `<mark>Error loading: ${error.message}</mark>`;
-        }
+        player = await sbagen(source);
+        player.addFile("river1.ogg", river1Bytes);
+        player.addFile("river2.ogg", river2Bytes);
+        player.play();
       }
 
-      // Example select
-      exampleSelect.addEventListener("change", (e) => {
-        const src = e.target.value;
-        if (src && sbagen) {
-          loadSequence(src);
-        }
-      });
+      document
+        .getElementById("exampleSelect")
+        .addEventListener("change", async (e) => {
+          await setSbg(await fetch(e.target.value).then((r) => r.text()));
+        });
 
-      // File input
-      fileInput.addEventListener("change", async (e) => {
-        const file = e.target.files[0];
-        if (file && sbagen) {
-          loadSequence(file);
-        }
-      });
-
-      // Play button
-      playBtn.addEventListener("click", async () => {
-        try {
-          console.log("Play button clicked");
-          await sbagen.play();
-          console.log("Play started successfully");
-        } catch (error) {
-          console.error("Play error:", error);
-          statusEl.innerHTML = `<mark>Error playing: ${error.message}</mark>`;
-        }
-      });
-
-      // Stop button
-      stopBtn.addEventListener("click", () => {
-        sbagen.stop();
-      });
+      document
+        .getElementById("inputFile")
+        .addEventListener("change", async (e) => {
+          const [file] = e.target.files;
+          const reader = new FileReader();
+          reader.onload = (r) => {
+            setSbg(r.target.result);
+          };
+          reader.readAsText(file);
+        });
     </script>
   </body>
 </html>
