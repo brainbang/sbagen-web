@@ -4,18 +4,13 @@ Binaural beats for brain-synchronization, now available for the web!
 
 This adds SDL2 audio support to [sbagen](https://uazu.net/sbagen/) for a more cross-platform & modern system. It can be built on any platform that supports SDL, including WebAssembly.
 
-**Latest Update:** Refactored main loop to use `emscripten_set_main_loop()` for proper web integration and smooth audio playback. See [EMSCRIPTEN_FIXES.md](EMSCRIPTEN_FIXES.md) for technical details.
-
 ## Features
 
 - ✅ SDL2 audio support for cross-platform compatibility
 - ✅ Modern macOS support (fixed Carbon/CoreAudio issues)
-- ✅ WebAssembly build for browser usage with proper main loop integration
-- ✅ Smooth audio playback in browsers using `emscripten_set_main_loop()`
+- ✅ WebAssembly build for browser usage
 - ✅ OGG Vorbis support (native only)
 - ✅ MP3 support with libmad (native only)
-- ✅ Signal handling (Ctrl-C support)
-- ✅ JavaScript API for web integration
 
 ## Building
 
